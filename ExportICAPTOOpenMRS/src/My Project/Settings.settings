@@ -1,0 +1,21 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="My" GeneratedClassName="MySettings" UseMySettingsClassName="true">
+  <Profiles />
+  <Settings>
+    <Setting Name="ConnectionStringOpenMRS" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Database=openmrs;Uid=root;Pwd=dm2007misau;Server=localhost;port=3306;default command timeout=100;Connection Timeout=20</Value>
+    </Setting>
+    <Setting Name="ServerNameOpenMRS" Type="System.String" Scope="User">
+      <Value Profile="(Default)">CnnOpenMRS</Value>
+    </Setting>
+    <Setting Name="DataBaseNameOpenMRS" Type="System.String" Scope="User">
+      <Value Profile="(Default)">openmrs</Value>
+    </Setting>
+    <Setting Name="UserIDOpenMRS" Type="System.String" Scope="User">
+      <Value Profile="(Default)">root</Value>
+    </Setting>
+    <Setting Name="PasswordOpenMRS" Type="System.String" Scope="User">
+      <Value Profile="(Default)">dm2007misau</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
