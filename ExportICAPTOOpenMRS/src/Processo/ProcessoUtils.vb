@@ -758,15 +758,15 @@ Public Class ProcessoUtils
     Private Function getNivelCoded(ByVal nivel As String) As Integer
         nivel = nivel.ToUpper
         Select Case nivel
-            Case "MÉDIO", "MEDIO", "NÍVEL MEDIO", "NÍVEL MÉDIO"
+            Case "MÉDIO", "MEDIO", "NÍVEL MEDIO", "NÍVEL MÉDIO", "TECNICO PROFISSINAL"
                 Return 1444
-            Case "NAO SABE LER", "NÃO SABE LER"
+            Case "NAO SABE LER", "NÃO SABE LER", "NÃO ESTUDOU", "NAO ESTUDOU"
                 Return 1445
-            Case "NÍVEL PRIMÁRIO", "NIVEL PRIMARIO", "NÍVEL PRIMARIO", "NIVEL PRIMÁRIO"
+            Case "NÍVEL PRIMÁRIO", "NIVEL PRIMARIO", "NÍVEL PRIMARIO", "NIVEL PRIMÁRIO", "ALFABETIZACAO", "PRIMÁRIO", "PRIMARIO"
                 Return 1446
-            Case "NÍVEL SECUNDÁRIO", "NIVEL SECUNDARIO", "NÍVEL SECUNDARIO", "NIVEL SECUNDÁRIO"
+            Case "NÍVEL SECUNDÁRIO", "NIVEL SECUNDARIO", "NÍVEL SECUNDARIO", "NIVEL SECUNDÁRIO", "BASICO", "BÁSICO", "SECUNDÁRIO"
                 Return 1447
-            Case "NÍVEL UNIVERSITÁRIO", "NIVEL UNIVERSITARIO", "NÍVEL UNIVERSITARIO", "NIVEL UNIVERSITÁRIO", "NIVEL SUPERIOR", "NÍVEL SUPERIOR", "UNIVERSIDADE"
+            Case "NÍVEL UNIVERSITÁRIO", "NIVEL UNIVERSITARIO", "NÍVEL UNIVERSITARIO", "NIVEL UNIVERSITÁRIO", "NIVEL SUPERIOR", "NÍVEL SUPERIOR", "UNIVERSIDADE", "LECENCIADA", "LICENCIADO", "LICENCIADA", "LECENCIADO", "U"
                 Return 1448
             Case Else
                 Return 5622
@@ -800,10 +800,14 @@ Public Class ProcessoUtils
                 Return 625
             Case "BITERAPIA", "BITERRAPIA", "AZT+NVP", "NVP+AZT"
                 Return 1801
-            Case "TRITERAPIA", "TRITERRAPIA", "AZT+3TC+NVP"
+            Case "TRITERAPIA", "TRITERRAPIA", "AZT+3TC+NVP", "TRI."
                 Return 1651
             Case "TRIOMUNE", "TRIUMUNE", "D4T+3TC+NVP", "TRIOMUNE 30", "TRIUMUNE 30", "D4T30+3TC+NVP", "D4T30,3TC,NVP", "D4T40,3TC,NVP", "T 30", "T30"
                 Return 792
+            Case "PTV"
+                Return 1598
+            Case "TARV"
+                Return 6276
             Case Else
                 Return 817
         End Select
@@ -836,40 +840,61 @@ Public Class ProcessoUtils
     End Function
     Private Function getProvenienciaCoded(ByVal prov As String) As Integer
         prov = prov.ToUpper
-        Select Case prov
-            Case "CLINICA MOVEL", "CLÍNICA MOVEL", "CLÍNICA MÓVEL", "C.M"
-                Return 1386
-            Case "LABORATÓRIO", "LABORATORIO"
-                Return 1387
-            Case "PNCTL", "PNCT"
-                Return 1414
-            Case "ENF", "ENFERMARIA"
-                Return 1595
-            Case "C.P", "CLINICA PRIVADA", "CP", "C.P."
-                Return 1386
-            Case "C.EXT"
-                Return 1596
-            Case "ATS", "GAS", "GATV", "UATS"
-                Return 1597
-            Case "PTV"
-                Return 1598
-            Case "CCR"
-                Return 1872
-            Case "CONTACTO"
-                Return 1932
-            Case "HG/HR"
-                Return 1984
-            Case "C.S.", "CS"
-                Return 1275
-            Case "2a SITIO", "2º SITIO", "SATÉLITE", "SATÉLITES", "SATELITE", "SATELITES"
-                Return 1986
-            Case "SAAJ"
-                Return 1987
-            Case "TRANSFERIDO DE", "TRANSFER DE", "TRANSFERE DE"
-                Return 1369
-            Case Else
-                Return 5622
-        End Select
+        If prov.StartsWith("CS") Or prov.StartsWith("C.S") Or prov.StartsWith("C. S") Then
+            Return 1275
+        ElseIf prov.StartsWith("TRA") Or prov.StartsWith("TANS") Then
+            Return 1369
+        ElseIf prov.StartsWith("HP") Or prov.StartsWith("H.C") Then
+            Return 1984
+        Else
+            Select Case prov
+                Case "CLINICA MOVEL", "CLÍNICA MOVEL", "CLÍNICA MÓVEL", "C.M"
+                    Return 1386
+                Case "LABORATÓRIO", "LABORATORIO"
+                    Return 1387
+                Case "PNCTL", "PNCT"
+                    Return 1414
+                Case "ENF", "ENFERMARIA"
+                    Return 1595
+                Case "C.P", "CLINICA PRIVADA", "CP", "C.P.", "Clinica Boa Esperanca", "Clinica 1", "Renascer"
+                    Return 1386
+                Case "C.EXT"
+                    Return 1596
+                Case "ATS", "GAS", "GATV", "UATS"
+                    Return 1597
+                Case "PTV", "Consulta Pre-Natal"
+                    Return 1598
+                Case "CCR"
+                    Return 1872
+                Case "CONTACTO"
+                    Return 1932
+                Case "HG/HR"
+                    Return 1984
+                Case "2a SITIO", "2º SITIO", "SATÉLITE", "SATÉLITES", "SATELITE", "SATELITES"
+                    Return 1986
+                Case "SAAJ"
+                    Return 1987
+                Case "CIRCUCIOSAO MASCULINA", "CIRCUSCISÃO MASCULINA"
+                    Return 408
+                Case "ATSC"
+                    Return 6245
+                Case "Banco de Socorro", "Maternidade"
+                    Return 6304
+                Case "SMI"
+                    Return 6288
+                Case "Pediatria"
+                    Return 1044
+                Case "ITS"
+                    Return 174
+                Case "Planeamento Familiar"
+                    Return 5483
+                Case "CD"
+                    Return 1699
+                Case Else
+                    Return 5622
+            End Select
+        End If
+        
     End Function
 
     Private Function getTipoAleitamentoCoded(ByVal aleitamento As String) As Integer
@@ -971,16 +996,22 @@ Public Class ProcessoUtils
         Comando.CommandType = CommandTypeEnum.adCmdText
         If AllPatients Then
             Comando.CommandText = "SELECT t_paciente.dataabertura, t_paciente.nid, t_paciente.codproveniencia, " & _
-        "t_paciente.emtarv, t_paciente.datainiciotarv, t_paciente.codregime, " & _
+        "t_paciente.designacaoprov,t_paciente.emtarv, t_paciente.datainiciotarv, t_paciente.codregime, " & _
         "t_paciente.codfuncionario, t_paciente.datadiagnostico, t_paciente.aconselhado, " & _
         "t_paciente.tipopaciente, t_paciente.datasaidatarv, t_paciente.cirurgias, " & _
         "t_paciente.transfusao, t_paciente.codestado, t_paciente.referidocd, " & _
         "t_paciente.situacaohiv, t_paciente.estadiooms, t_paciente.emtratamentotb, " & _
-        "t_paciente.cotrimoxazol, t_paciente.vitamina, t_paciente.antibioticos, " & _
-        "t_paciente.antifugicos, t_paciente.observacao, t_paciente.Codigoproveniencia, " & _
-        "t_paciente.DataCD, t_paciente.quaisantibioticos, t_paciente.quaiscotrimoxazol, " & _
-        "t_paciente.quaisvitamina, t_paciente.quaisantifugicos, t_paciente.numerotarv, " & _
-        "t_paciente.designacaoprov, t_adulto.codprofissao, t_adulto.codnivel, " & _
+        "t_paciente.observacao,t_paciente.CodUniSan,t_paciente.Codigoproveniencia, " & _
+        "t_paciente.DataCD, t_paciente.numerotarv, t_paciente.referidohdd, " & _
+        "t_paciente.datareferidohdd, t_paciente.aceitabuscaactiva, t_paciente.dataaceitabuscaactiva, " & _
+        "t_paciente.referidobuscaactiva, t_paciente.datareferenciabuscaactiva, t_paciente.destinopaciente, " & _
+        "t_paciente.Educacaoprevencao, t_paciente.nlivroPreTarv, t_paciente.paginaPreTarv, " & _
+        "t_paciente.linhaPreTarv, t_paciente.dataPreTarv, t_paciente.nlivroTarv, " & _
+        "t_paciente.paginaTarv, t_paciente.linhaTarv, t_paciente.dataTarv2, " & _
+        "t_paciente.transfOutraUs, t_paciente.dataElegibilidadeInicioTarv, t_paciente.apssDisponivel, " & _
+        "t_paciente.apssFormaContacto, t_paciente.apssQuemInformouSeroestado, t_paciente.apssconheceestadoparceiro, " & _
+        "t_paciente.dataprevistainiciotarv, t_paciente.nie, " & _
+        "t_adulto.codprofissao, t_adulto.codnivel, " & _
         "t_adulto.nrconviventes, t_adulto.codestadocivil, t_adulto.nrconjuges, " & _
         "t_adulto.serologiaHivconjuge, t_adulto.Nrprocesso, t_adulto.outrosparceiros, " & _
         "t_adulto.nrfilhos, t_adulto.nrfilhostestados, t_adulto.nrfilhoshiv, " & _
@@ -992,35 +1023,42 @@ Public Class ProcessoUtils
         "t_adulto.Alergiamedicamentos, t_adulto.Alergiasquais, t_adulto.Antecedentestarv, " & _
         "t_adulto.antecedentesquais, t_adulto.exposicaoacidental, t_adulto.tipoacidente, " & _
         "t_adulto.historiaactual, t_adulto.hipotesedediagnostico, t_adulto.codkarnosfsky, " & _
-        "t_adulto.geleira, t_adulto.electricidade, t_adulto.sexualidade " & _
+        "t_adulto.geleira, t_adulto.electricidade, t_adulto.sexualidade,recebeSms,aceitaSerContatado,idseguimento " & _
         "FROM t_paciente LEFT JOIN t_adulto ON t_paciente.nid = t_adulto.nid " & _
         "WHERE (((t_paciente.tipopaciente)='Adulto' or t_paciente.tipopaciente is null));"
         Else
             Comando.CommandText = "SELECT t_paciente.dataabertura, t_paciente.nid, t_paciente.codproveniencia, " & _
-        "t_paciente.emtarv, t_paciente.datainiciotarv, t_paciente.codregime, " & _
-        "t_paciente.codfuncionario, t_paciente.datadiagnostico, t_paciente.aconselhado, " & _
-        "t_paciente.tipopaciente, t_paciente.datasaidatarv, t_paciente.cirurgias, " & _
-        "t_paciente.transfusao, t_paciente.codestado, t_paciente.referidocd, " & _
-        "t_paciente.situacaohiv, t_paciente.estadiooms, t_paciente.emtratamentotb, " & _
-        "t_paciente.cotrimoxazol, t_paciente.vitamina, t_paciente.antibioticos, " & _
-        "t_paciente.antifugicos, t_paciente.observacao, t_paciente.Codigoproveniencia, " & _
-        "t_paciente.DataCD, t_paciente.quaisantibioticos, t_paciente.quaiscotrimoxazol, " & _
-        "t_paciente.quaisvitamina, t_paciente.quaisantifugicos, t_paciente.numerotarv, " & _
-        "t_paciente.designacaoprov, t_adulto.codprofissao, t_adulto.codnivel, " & _
-        "t_adulto.nrconviventes, t_adulto.codestadocivil, t_adulto.nrconjuges, " & _
-        "t_adulto.serologiaHivconjuge, t_adulto.Nrprocesso, t_adulto.outrosparceiros, " & _
-        "t_adulto.nrfilhos, t_adulto.nrfilhostestados, t_adulto.nrfilhoshiv, " & _
-        "t_adulto.tabaco, t_adulto.alcool, t_adulto.droga, " & _
-        "t_adulto.nrparceiros, t_adulto.antecedentesgenelogicos, t_adulto.datamestruacao, " & _
-        "t_adulto.aborto, t_adulto.ptv, t_adulto.ptvquais, " & _
-        "t_adulto.gravida, t_adulto.semanagravidez, t_adulto.dataprevistoparto, " & _
-        "t_adulto.puerpera, t_adulto.dataparto, t_adulto.tipoaleitamento, " & _
-        "t_adulto.Alergiamedicamentos, t_adulto.Alergiasquais, t_adulto.Antecedentestarv, " & _
-        "t_adulto.antecedentesquais, t_adulto.exposicaoacidental, t_adulto.tipoacidente, " & _
-        "t_adulto.historiaactual, t_adulto.hipotesedediagnostico, t_adulto.codkarnosfsky, " & _
-        "t_adulto.geleira, t_adulto.electricidade, t_adulto.sexualidade " & _
-        "FROM t_paciente LEFT JOIN t_adulto ON t_paciente.nid = t_adulto.nid " & _
-        "WHERE (((t_paciente.tipopaciente)='Adulto' or t_paciente.tipopaciente is null)) and t_paciente.nid in (" & whereQuery & ");"
+       "t_paciente.designacaoprov,t_paciente.emtarv, t_paciente.datainiciotarv, t_paciente.codregime, " & _
+       "t_paciente.codfuncionario, t_paciente.datadiagnostico, t_paciente.aconselhado, " & _
+       "t_paciente.tipopaciente, t_paciente.datasaidatarv, t_paciente.cirurgias, " & _
+       "t_paciente.transfusao, t_paciente.codestado, t_paciente.referidocd, " & _
+       "t_paciente.situacaohiv, t_paciente.estadiooms, t_paciente.emtratamentotb, " & _
+       "t_paciente.observacao,t_paciente.CodUniSan,t_paciente.Codigoproveniencia, " & _
+       "t_paciente.DataCD, t_paciente.numerotarv, t_paciente.referidohdd, " & _
+       "t_paciente.datareferidohdd, t_paciente.aceitabuscaactiva, t_paciente.dataaceitabuscaactiva, " & _
+       "t_paciente.referidobuscaactiva, t_paciente.datareferenciabuscaactiva, t_paciente.destinopaciente, " & _
+       "t_paciente.Educacaoprevencao, t_paciente.nlivroPreTarv, t_paciente.paginaPreTarv, " & _
+       "t_paciente.linhaPreTarv, t_paciente.dataPreTarv, t_paciente.nlivroTarv, " & _
+       "t_paciente.paginaTarv, t_paciente.linhaTarv, t_paciente.dataTarv2, " & _
+       "t_paciente.transfOutraUs, t_paciente.dataElegibilidadeInicioTarv, t_paciente.apssDisponivel, " & _
+       "t_paciente.apssFormaContacto, t_paciente.apssQuemInformouSeroestado, t_paciente.apssconheceestadoparceiro, " & _
+       "t_paciente.dataprevistainiciotarv, t_paciente.nie, " & _
+       "t_adulto.codprofissao, t_adulto.codnivel, " & _
+       "t_adulto.nrconviventes, t_adulto.codestadocivil, t_adulto.nrconjuges, " & _
+       "t_adulto.serologiaHivconjuge, t_adulto.Nrprocesso, t_adulto.outrosparceiros, " & _
+       "t_adulto.nrfilhos, t_adulto.nrfilhostestados, t_adulto.nrfilhoshiv, " & _
+       "t_adulto.tabaco, t_adulto.alcool, t_adulto.droga, " & _
+       "t_adulto.nrparceiros, t_adulto.antecedentesgenelogicos, t_adulto.datamestruacao, " & _
+       "t_adulto.aborto, t_adulto.ptv, t_adulto.ptvquais, " & _
+       "t_adulto.gravida, t_adulto.semanagravidez, t_adulto.dataprevistoparto, " & _
+       "t_adulto.puerpera, t_adulto.dataparto, t_adulto.tipoaleitamento, " & _
+       "t_adulto.Alergiamedicamentos, t_adulto.Alergiasquais, t_adulto.Antecedentestarv, " & _
+       "t_adulto.antecedentesquais, t_adulto.exposicaoacidental, t_adulto.tipoacidente, " & _
+       "t_adulto.historiaactual, t_adulto.hipotesedediagnostico, t_adulto.codkarnosfsky, " & _
+       "t_adulto.geleira, t_adulto.electricidade, t_adulto.sexualidade,t_adulto.recebeSms,t_adulto.aceitaSerContatado,idseguimento " & _
+       "FROM t_paciente LEFT JOIN t_adulto ON t_paciente.nid = t_adulto.nid " & _
+       "WHERE (((t_paciente.tipopaciente)='Adulto' or t_paciente.tipopaciente is null)) and t_paciente.nid in (" & whereQuery & ");"
+           
         End If
         
         rs = Comando.Execute
@@ -1041,14 +1079,15 @@ Public Class ProcessoUtils
                     End If
                     dataAbertura = rs.Fields.Item("dataabertura").Value
 
-                    cmmDestino.CommandText = "Insert into encounter(encounter_type,patient_id,provider_id,location_id," & _
-                                                "form_id,encounter_datetime,creator,date_created,voided,uuid) values(5," & patientID & "," & openMRSProviderID & "," & locationid & "," & _
-                                                "99,'" & dataMySQL(dataAbertura) & "',22,now(),0,uuid())"
-                    cmmDestino.ExecuteNonQuery()
+                    ' cmmDestino.CommandText = "Insert into encounter(encounter_type,patient_id,provider_id,location_id," & _
+                    '                            "form_id,encounter_datetime,creator,date_created,voided,uuid) values(5," & patientID & "," & openMRSProviderID & "," & locationid & "," & _
+                    '                           "99,'" & dataMySQL(dataAbertura) & "',22,now(),0,uuid())"
+                    'cmmDestino.ExecuteNonQuery()
+                    '
+                    'cmmDestino.CommandText = "Select max(encounter_id) from encounter"
+                    'encounterID = cmmDestino.ExecuteScalar
 
-                    cmmDestino.CommandText = "Select max(encounter_id) from encounter"
-                    encounterID = cmmDestino.ExecuteScalar
-
+                    encounterID = EncounterDAO.insertEncounterByParam(5, patientID, locationid, 99, dataAbertura, 12, openMRSProviderID)
 
                     obsSet = New Obs
 
@@ -1111,7 +1150,7 @@ Public Class ProcessoUtils
                         obs.data_Type = ObsDataType.TNumeric
                         obs.concept_id = 1656
                         Try
-                            obs.value_numeric = (rs.Fields.Item("nrconviventes").Value)
+                            obs.value_numeric = rs.Fields.Item("nrconviventes").Value
                         Catch ex As Exception
                             obs.value_numeric = 0
                         End Try
@@ -1152,7 +1191,11 @@ Public Class ProcessoUtils
                         obs.obs_datetime = dataAbertura
                         obs.data_Type = ObsDataType.TNumeric
                         obs.concept_id = 5557
-                        obs.value_numeric = rs.Fields.Item("nrconjuges").Value
+                        Try
+                            obs.value_numeric = rs.Fields.Item("nrconjuges").Value
+                        Catch ex As Exception
+                            obs.value_numeric = 0
+                        End Try
                         dataArray.Add(obs)
                     End If
 
@@ -1211,7 +1254,13 @@ Public Class ProcessoUtils
                         obs.obs_datetime = dataAbertura
                         obs.data_Type = ObsDataType.TNumeric
                         obs.concept_id = 5573
-                        obs.value_numeric = rs.Fields.Item("nrfilhos").Value
+
+                        Try
+                            obs.value_numeric = rs.Fields.Item("nrfilhos").Value
+                        Catch ex As Exception
+                            obs.value_numeric = 0
+                        End Try
+
                         dataArray.Add(obs)
                     End If
 
@@ -1265,40 +1314,36 @@ Public Class ProcessoUtils
                     dataArray.Clear()
 
                     If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "geleira")) Then
-                        obs = New Obs
-                        obs.location_id = locationid
-                        obs.person_id = patientID
-                        obs.date_created = Now
-                        obs.voided = 0
-                        obs.encounter_id = encounterID
-                        obs.obs_datetime = dataAbertura
-                        obs.data_Type = ObsDataType.TCoded
-                        obs.concept_id = 1455
                         If rs.Fields.Item("geleira").Value Then
+                            obs = New Obs
+                            obs.location_id = locationid
+                            obs.person_id = patientID
+                            obs.date_created = Now
+                            obs.voided = 0
+                            obs.encounter_id = encounterID
+                            obs.obs_datetime = dataAbertura
+                            obs.data_Type = ObsDataType.TCoded
+                            obs.concept_id = 1455
                             obs.value_coded = 1065
-                        Else
-                            obs.value_coded = 1066
+                            dataArray.Add(obs)
                         End If
-                        'obs.value_boolean = rs.Fields.Item("geleira").Value
-                        dataArray.Add(obs)
+
                     End If
                     If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "electricidade")) Then
-                        obs = New Obs
-                        obs.location_id = locationid
-                        obs.person_id = patientID
-                        obs.date_created = Now
-                        obs.voided = 0
-                        obs.encounter_id = encounterID
-                        obs.obs_datetime = dataAbertura
-                        obs.data_Type = ObsDataType.TCoded
-                        obs.concept_id = 5609
                         If rs.Fields.Item("electricidade").Value Then
+                            obs = New Obs
+                            obs.location_id = locationid
+                            obs.person_id = patientID
+                            obs.date_created = Now
+                            obs.voided = 0
+                            obs.encounter_id = encounterID
+                            obs.obs_datetime = dataAbertura
+                            obs.data_Type = ObsDataType.TCoded
+                            obs.concept_id = 5609
                             obs.value_coded = 1065
-                        Else
-                            obs.value_coded = 1066
+                            dataArray.Add(obs)
                         End If
-                        'obs.value_boolean = rs.Fields.Item("electricidade").Value
-                        dataArray.Add(obs)
+
                     End If
 
                     If dataArray.Count > 0 Then
@@ -1513,7 +1558,7 @@ Public Class ProcessoUtils
                             obs.value_coded = 1665
                         ElseIf parceir = 1 Then
                             obs.value_coded = 1662
-                        ElseIf parceir >= 2 And parceir <= 3 Then
+                        ElseIf parceir <= 3 Then
                             obs.value_coded = 1663
                         Else
                             obs.value_coded = 1664
@@ -1526,6 +1571,7 @@ Public Class ProcessoUtils
                             ObsDAO.insertObs(o, False)
                         Next
                     End If
+
                     dataArray.Clear()
 
                     If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "antecedentesgenelogicos")) Then
@@ -1710,7 +1756,7 @@ Public Class ProcessoUtils
                     End If
                     dataArray.Clear()
 
-                    
+
 
                     If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "Alergiamedicamentos")) Then
                         obs = New Obs
@@ -1930,6 +1976,120 @@ Public Class ProcessoUtils
                 End If
                 temArray.Clear()
                 dataArray.Clear()
+
+                If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "nlivroPreTarv")) Then
+
+                    Dim nLivro As Integer = rs.Fields.Item("nlivroPreTarv").Value
+
+                    If nLivro <= 2 Then
+
+                        Dim nPagina As Integer = rs.Fields.Item("paginaPreTarv").Value
+                        Dim nLinha As Integer = rs.Fields.Item("linhaPreTarv").Value
+                        Dim dataLivro As Date = rs.Fields.Item("dataPreTarv").Value
+
+                        Dim livroTARVEncounterID As Integer = EncounterDAO.insertEncounterByParam(32, patientID, locationid, 128, dataLivro, 14, openMRSProviderID)
+
+                        'Livro
+                        obs = New Obs
+                        obs.location_id = locationid
+                        obs.person_id = patientID
+                        obs.date_created = Now
+                        obs.voided = 0
+                        obs.encounter_id = livroTARVEncounterID
+                        obs.obs_datetime = dataLivro
+                        obs.data_Type = ObsDataType.TCoded
+                        obs.concept_id = 6263
+                        obs.value_coded = IIf(nLivro = 1, 6259, 6260)
+                        dataArray.Add(obs)
+
+                        obs = New Obs
+                        obs.location_id = locationid
+                        obs.person_id = patientID
+                        obs.date_created = Now
+                        obs.voided = 0
+                        obs.encounter_id = livroTARVEncounterID
+                        obs.obs_datetime = dataLivro
+                        obs.data_Type = ObsDataType.TNumeric
+                        obs.concept_id = 6265
+                        obs.value_numeric = nPagina
+                        dataArray.Add(obs)
+
+                        obs = New Obs
+                        obs.location_id = locationid
+                        obs.person_id = patientID
+                        obs.date_created = Now
+                        obs.voided = 0
+                        obs.encounter_id = livroTARVEncounterID
+                        obs.obs_datetime = dataLivro
+                        obs.data_Type = ObsDataType.TNumeric
+                        obs.concept_id = 6267
+                        obs.value_numeric = nLinha
+                        dataArray.Add(obs)
+
+                        For Each o As Obs In dataArray
+                            ObsDAO.insertObs(o, False)
+                        Next
+                    End If
+                End If
+
+
+                If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "nlivroTarv")) Then
+
+                    Dim nLivro As Integer = rs.Fields.Item("nlivroTarv").Value
+
+                    If nLivro <= 2 Then
+
+                        Dim nPagina As Integer = rs.Fields.Item("paginaTarv").Value
+                        Dim nLinha As Integer = rs.Fields.Item("linhaTarv").Value
+                        Dim dataLivro As Date = rs.Fields.Item("dataTarv2").Value
+
+                        Dim livroTARVEncounterID As Integer = EncounterDAO.insertEncounterByParam(33, patientID, locationid, 129, dataLivro, 14, openMRSProviderID)
+
+                        'Livro
+                        obs = New Obs
+                        obs.location_id = locationid
+                        obs.person_id = patientID
+                        obs.date_created = Now
+                        obs.voided = 0
+                        obs.encounter_id = livroTARVEncounterID
+                        obs.obs_datetime = dataLivro
+                        obs.data_Type = ObsDataType.TCoded
+                        obs.concept_id = 6264
+                        obs.value_coded = IIf(nLivro = 1, 6261, 6262)
+                        dataArray.Add(obs)
+
+                        obs = New Obs
+                        obs.location_id = locationid
+                        obs.person_id = patientID
+                        obs.date_created = Now
+                        obs.voided = 0
+                        obs.encounter_id = livroTARVEncounterID
+                        obs.obs_datetime = dataLivro
+                        obs.data_Type = ObsDataType.TNumeric
+                        obs.concept_id = 6266
+                        obs.value_numeric = nPagina
+                        dataArray.Add(obs)
+
+                        obs = New Obs
+                        obs.location_id = locationid
+                        obs.person_id = patientID
+                        obs.date_created = Now
+                        obs.voided = 0
+                        obs.encounter_id = livroTARVEncounterID
+                        obs.obs_datetime = dataLivro
+                        obs.data_Type = ObsDataType.TNumeric
+                        obs.concept_id = 6268
+                        obs.value_numeric = nLinha
+                        dataArray.Add(obs)
+
+                        For Each o As Obs In dataArray
+                            ObsDAO.insertObs(o, False)
+                        Next
+                    End If
+                End If
+
+
+
                 ProcessoParteB.importProcessoBAdulto(nid, locationid, patientID)
                 rs.MoveNext()
             End While
@@ -1967,71 +2127,60 @@ Public Class ProcessoUtils
 
         Comando.CommandType = CommandTypeEnum.adCmdText
         If AllPatients Then
-            Comando.CommandText = "SELECT t_paciente.dataabertura, t_paciente.nid, t_paciente.codproveniencia," & _
-        " t_paciente.emtarv, t_paciente.datainiciotarv, t_paciente.codregime, " & _
-        " t_paciente.codfuncionario, t_paciente.datadiagnostico, t_paciente.aconselhado, " & _
-        " t_paciente.tipopaciente, t_paciente.datasaidatarv, t_paciente.cirurgias, " & _
-        " t_paciente.transfusao, t_paciente.codestado, t_paciente.referidocd, " & _
-        " t_paciente.situacaohiv, t_paciente.estadiooms, t_paciente.emtratamentotb, " & _
-        " t_paciente.cotrimoxazol, t_paciente.vitamina, t_paciente.antibioticos, " & _
-        " t_paciente.antifugicos, t_paciente.observacao, t_paciente.Codigoproveniencia, " & _
-        " t_paciente.DataCD, t_paciente.quaisantibioticos, t_paciente.quaiscotrimoxazol, " & _
-        " t_paciente.quaisvitamina, t_paciente.quaisantifugicos, t_paciente.numerotarv, " & _
-        " t_paciente.designacaoprov, t_crianca.tipoparto, [local] as localnasc," & _
-        " t_crianca.termo, t_crianca.pesonascimento, t_crianca.exposicaotarvmae, " & _
-        " t_crianca.exposicaotarvnascenca, t_crianca.patologianeonatal, t_crianca.injeccoes, " & _
-        " t_crianca.escarificacoes, t_crianca.extracoesdentarias, t_crianca.aleitamentomaterno, " & _
-        " t_crianca.aleitamentoexclusivo, t_crianca.idadedesmame, t_crianca.pavcompleto, " & _
-        " t_crianca.idadecronologica, t_crianca.bailey, t_crianca.idmae, " & _
-        " t_crianca.idpai, t_crianca.observacao as cobs " & _
+            Comando.CommandText = "SELECT t_paciente.dataabertura, t_paciente.nid, t_paciente.codproveniencia, " & _
+        "t_paciente.designacaoprov,t_paciente.emtarv, t_paciente.datainiciotarv, t_paciente.codregime, " & _
+        "t_paciente.codfuncionario, t_paciente.datadiagnostico, t_paciente.aconselhado, " & _
+        "t_paciente.tipopaciente, t_paciente.datasaidatarv, t_paciente.cirurgias, " & _
+        "t_paciente.transfusao, t_paciente.codestado, t_paciente.referidocd, " & _
+        "t_paciente.situacaohiv, t_paciente.estadiooms, t_paciente.emtratamentotb, " & _
+        "t_paciente.observacao,t_paciente.CodUniSan,t_paciente.Codigoproveniencia, " & _
+        "t_paciente.DataCD, t_paciente.numerotarv, t_paciente.referidohdd, " & _
+        "t_paciente.datareferidohdd, t_paciente.aceitabuscaactiva, t_paciente.dataaceitabuscaactiva, " & _
+        "t_paciente.referidobuscaactiva, t_paciente.datareferenciabuscaactiva, t_paciente.destinopaciente, " & _
+        "t_paciente.Educacaoprevencao, t_paciente.nlivroPreTarv, t_paciente.paginaPreTarv, " & _
+        "t_paciente.linhaPreTarv, t_paciente.dataPreTarv, t_paciente.nlivroTarv, " & _
+        "t_paciente.paginaTarv, t_paciente.linhaTarv, t_paciente.dataTarv2, " & _
+        "t_paciente.transfOutraUs, t_paciente.dataElegibilidadeInicioTarv, t_paciente.apssDisponivel, " & _
+        "t_paciente.apssFormaContacto, t_paciente.apssQuemInformouSeroestado, t_paciente.apssconheceestadoparceiro, " & _
+        "t_paciente.dataprevistainiciotarv, t_paciente.nie, " & _
+        "t_crianca.tipoparto, t_crianca.[local] as localnasc, " & _
+        "t_crianca.termo, t_crianca.pesonascimento, t_crianca.exposicaotarvmae, " & _
+        "t_crianca.exposicaotarvnascenca, t_crianca.patologianeonatal, t_crianca.injeccoes, " & _
+        "t_crianca.escarificacoes, t_crianca.extracoesdentarias, t_crianca.aleitamentomaterno, " & _
+        "t_crianca.aleitamentoexclusivo, t_crianca.idadedesmame, t_crianca.pavcompleto, " & _
+        "t_crianca.idadecronologica, t_crianca.bailey, t_crianca.idmae, " & _
+        "t_crianca.idpai, t_crianca.observacao, t_crianca.recebeSmsCrianca,t_crianca.telefoneCrianca " & _
         " FROM t_paciente LEFT JOIN t_crianca ON t_paciente.nid = t_crianca.nid " & _
-        " WHERE (((t_paciente.tipopaciente)='Criança')) OR (((t_paciente.tipopaciente)='Crianca'));"
+        " WHERE (((t_paciente.tipopaciente)='Crianca' or (t_paciente.tipopaciente)='Criança'));"
         Else
-            Comando.CommandText = "SELECT t_paciente.dataabertura, t_paciente.nid, t_paciente.codproveniencia," & _
-        " t_paciente.emtarv, t_paciente.datainiciotarv, t_paciente.codregime, " & _
-        " t_paciente.codfuncionario, t_paciente.datadiagnostico, t_paciente.aconselhado, " & _
-        " t_paciente.tipopaciente, t_paciente.datasaidatarv, t_paciente.cirurgias, " & _
-        " t_paciente.transfusao, t_paciente.codestado, t_paciente.referidocd, " & _
-        " t_paciente.situacaohiv, t_paciente.estadiooms, t_paciente.emtratamentotb, " & _
-        " t_paciente.cotrimoxazol, t_paciente.vitamina, t_paciente.antibioticos, " & _
-        " t_paciente.antifugicos, t_paciente.observacao, t_paciente.Codigoproveniencia, " & _
-        " t_paciente.DataCD, t_paciente.quaisantibioticos, t_paciente.quaiscotrimoxazol, " & _
-        " t_paciente.quaisvitamina, t_paciente.quaisantifugicos, t_paciente.numerotarv, " & _
-        " t_paciente.designacaoprov, t_crianca.tipoparto, [local] as localnasc," & _
-        " t_crianca.termo, t_crianca.pesonascimento, t_crianca.exposicaotarvmae, " & _
-        " t_crianca.exposicaotarvnascenca, t_crianca.patologianeonatal, t_crianca.injeccoes, " & _
-        " t_crianca.escarificacoes, t_crianca.extracoesdentarias, t_crianca.aleitamentomaterno, " & _
-        " t_crianca.aleitamentoexclusivo, t_crianca.idadedesmame, t_crianca.pavcompleto, " & _
-        " t_crianca.idadecronologica, t_crianca.bailey, t_crianca.idmae, " & _
-        " t_crianca.idpai, t_crianca.observacao as cobs " & _
+            Comando.CommandText = "SELECT t_paciente.dataabertura, t_paciente.nid, t_paciente.codproveniencia, " & _
+        "t_paciente.designacaoprov,t_paciente.emtarv, t_paciente.datainiciotarv, t_paciente.codregime, " & _
+        "t_paciente.codfuncionario, t_paciente.datadiagnostico, t_paciente.aconselhado, " & _
+        "t_paciente.tipopaciente, t_paciente.datasaidatarv, t_paciente.cirurgias, " & _
+        "t_paciente.transfusao, t_paciente.codestado, t_paciente.referidocd, " & _
+        "t_paciente.situacaohiv, t_paciente.estadiooms, t_paciente.emtratamentotb, " & _
+        "t_paciente.observacao,t_paciente.CodUniSan,t_paciente.Codigoproveniencia, " & _
+        "t_paciente.DataCD, t_paciente.numerotarv, t_paciente.referidohdd, " & _
+        "t_paciente.datareferidohdd, t_paciente.aceitabuscaactiva, t_paciente.dataaceitabuscaactiva, " & _
+        "t_paciente.referidobuscaactiva, t_paciente.datareferenciabuscaactiva, t_paciente.destinopaciente, " & _
+        "t_paciente.Educacaoprevencao, t_paciente.nlivroPreTarv, t_paciente.paginaPreTarv, " & _
+        "t_paciente.linhaPreTarv, t_paciente.dataPreTarv, t_paciente.nlivroTarv, " & _
+        "t_paciente.paginaTarv, t_paciente.linhaTarv, t_paciente.dataTarv2, " & _
+        "t_paciente.transfOutraUs, t_paciente.dataElegibilidadeInicioTarv, t_paciente.apssDisponivel, " & _
+        "t_paciente.apssFormaContacto, t_paciente.apssQuemInformouSeroestado, t_paciente.apssconheceestadoparceiro, " & _
+        "t_paciente.dataprevistainiciotarv, t_paciente.nie, " & _
+        "t_crianca.tipoparto, t_crianca.[local] as localnasc, " & _
+        "t_crianca.termo, t_crianca.pesonascimento, t_crianca.exposicaotarvmae, " & _
+        "t_crianca.exposicaotarvnascenca, t_crianca.patologianeonatal, t_crianca.injeccoes, " & _
+        "t_crianca.escarificacoes, t_crianca.extracoesdentarias, t_crianca.aleitamentomaterno, " & _
+        "t_crianca.aleitamentoexclusivo, t_crianca.idadedesmame, t_crianca.pavcompleto, " & _
+        "t_crianca.idadecronologica, t_crianca.bailey, t_crianca.idmae, " & _
+        "t_crianca.idpai, t_crianca.observacao, t_crianca.recebeSmsCrianca,t_crianca.telefoneCrianca " & _
         " FROM t_paciente LEFT JOIN t_crianca ON t_paciente.nid = t_crianca.nid " & _
-        " WHERE (((t_paciente.tipopaciente)='Criança')) OR (((t_paciente.tipopaciente)='Crianca')) and t_paciente.nid in (" & whereQuery & ");"
-
-
+        " WHERE (((t_paciente.tipopaciente)='Crianca' or (t_paciente.tipopaciente)='Criança')) and t_paciente.nid in (" & whereQuery & ");"
         End If
-        
-        ' rs.Open("SELECT t_paciente.dataabertura, t_paciente.nid, t_paciente.codproveniencia," & _
-        '" t_paciente.emtarv, t_paciente.datainiciotarv, t_paciente.codregime, " & _
-        '" t_paciente.codfuncionario, t_paciente.datadiagnostico, t_paciente.aconselhado, " & _
-        '" t_paciente.tipopaciente, t_paciente.datasaidatarv, t_paciente.cirurgias, " & _
-        '" t_paciente.transfusao, t_paciente.codestado, t_paciente.referidocd, " & _
-        '" t_paciente.situacaohiv, t_paciente.estadiooms, t_paciente.emtratamentotb, " & _
-        '" t_paciente.cotrimoxazol, t_paciente.vitamina, t_paciente.antibioticos, " & _
-        '" t_paciente.antifugicos, t_paciente.observacao, t_paciente.Codigoproveniencia, " & _
-        '" t_paciente.DataCD, t_paciente.quaisantibioticos, t_paciente.quaiscotrimoxazol, " & _
-        '" t_paciente.quaisvitamina, t_paciente.quaisantifugicos, t_paciente.numerotarv, " & _
-        '" t_paciente.designacaoprov,  " & _
-        '" t_crianca.termo, t_crianca.pesonascimento, t_crianca.exposicaotarvmae, " & _
-        '" t_crianca.exposicaotarvnascenca, t_crianca.patologianeonatal, t_crianca.injeccoes, " & _
-        '" t_crianca.escarificacoes, t_crianca.extracoesdentarias, t_crianca.aleitamentomaterno, " & _
-        '" t_crianca.aleitamentoexclusivo, t_crianca.idadedesmame, t_crianca.pavcompleto, " & _
-        '" t_crianca.idadecronologica, t_crianca.bailey, t_crianca.idmae, " & _
-        '" t_crianca.idpai " & _
-        '" FROM t_paciente LEFT JOIN t_crianca ON t_paciente.nid = t_crianca.nid " & _
-        '" WHERE (((t_paciente.tipopaciente)='Criança')) OR (((t_paciente.tipopaciente)='Crianca'));", ICAPConection)
 
         rs = Comando.Execute
-
 
         If Not (rs.EOF And rs.BOF) Then
             rs.MoveFirst()
@@ -2049,15 +2198,9 @@ Public Class ProcessoUtils
                     End If
 
                     dataAbertura = rs.Fields.Item("dataabertura").Value
+                   
 
-                    cmmDestino.CommandText = "Insert into encounter(encounter_type,patient_id,provider_id,location_id," & _
-                                                "form_id,encounter_datetime,creator,date_created,uuid) values(7," & patientID & "," & openMRSProviderID & "," & locationid & "," & _
-                                                "108,'" & dataMySQL(dataAbertura) & "',22,now(),uuid())"
-                    cmmDestino.ExecuteNonQuery()
-
-                    cmmDestino.CommandText = "Select max(encounter_id) from encounter"
-                    encounterID = cmmDestino.ExecuteScalar
-
+                    encounterID = EncounterDAO.insertEncounterByParam(7, patientID, locationid, 108, dataAbertura, 12, openMRSProviderID)
 
                     obsSet = New Obs
 
@@ -2116,7 +2259,7 @@ Public Class ProcessoUtils
                     End If
                     dataArray.Clear()
 
-                    If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "Codigoproveniencia")) Then
+                    If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "codproveniencia")) Then
                         obs = New Obs
                         obs.location_id = locationid
                         obs.person_id = patientID
@@ -2126,7 +2269,7 @@ Public Class ProcessoUtils
                         obs.obs_datetime = dataAbertura
                         obs.data_Type = ObsDataType.TCoded
                         obs.concept_id = 1594
-                        obs.value_coded = getProvenienciaCoded(rs.Fields.Item("Codigoproveniencia").Value)
+                        obs.value_coded = getProvenienciaCoded(rs.Fields.Item("codproveniencia").Value)
                         dataArray.Add(obs)
                     End If
                     If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "designacaoprov")) Then
@@ -2640,6 +2783,120 @@ Public Class ProcessoUtils
                 End If
                 temArray.Clear()
                 dataArray.Clear()
+
+                If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "nlivroPreTarv")) Then
+
+                    Dim nLivro As Integer = rs.Fields.Item("nlivroPreTarv").Value
+
+                    If nLivro <= 2 Then
+
+                        Dim nPagina As Integer = rs.Fields.Item("paginaPreTarv").Value
+                        Dim nLinha As Integer = rs.Fields.Item("linhaPreTarv").Value
+                        Dim dataLivro As Date = rs.Fields.Item("dataPreTarv").Value
+
+                        Dim livroTARVEncounterID As Integer = EncounterDAO.insertEncounterByParam(32, patientID, locationid, 128, dataLivro, 14, openMRSProviderID)
+
+                        'Livro
+                        obs = New Obs
+                        obs.location_id = locationid
+                        obs.person_id = patientID
+                        obs.date_created = Now
+                        obs.voided = 0
+                        obs.encounter_id = livroTARVEncounterID
+                        obs.obs_datetime = dataLivro
+                        obs.data_Type = ObsDataType.TCoded
+                        obs.concept_id = 6263
+                        obs.value_coded = IIf(nLivro = 1, 6259, 6260)
+                        dataArray.Add(obs)
+
+                        obs = New Obs
+                        obs.location_id = locationid
+                        obs.person_id = patientID
+                        obs.date_created = Now
+                        obs.voided = 0
+                        obs.encounter_id = livroTARVEncounterID
+                        obs.obs_datetime = dataLivro
+                        obs.data_Type = ObsDataType.TNumeric
+                        obs.concept_id = 6265
+                        obs.value_numeric = nPagina
+                        dataArray.Add(obs)
+
+                        obs = New Obs
+                        obs.location_id = locationid
+                        obs.person_id = patientID
+                        obs.date_created = Now
+                        obs.voided = 0
+                        obs.encounter_id = livroTARVEncounterID
+                        obs.obs_datetime = dataLivro
+                        obs.data_Type = ObsDataType.TNumeric
+                        obs.concept_id = 6267
+                        obs.value_numeric = nLinha
+                        dataArray.Add(obs)
+
+                        For Each o As Obs In dataArray
+                            ObsDAO.insertObs(o, False)
+                        Next
+                    End If
+                End If
+
+
+                If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "nlivroTarv")) Then
+
+                    Dim nLivro As Integer = rs.Fields.Item("nlivroTarv").Value
+
+                    If nLivro <= 2 Then
+
+                        Dim nPagina As Integer = rs.Fields.Item("paginaTarv").Value
+                        Dim nLinha As Integer = rs.Fields.Item("linhaTarv").Value
+                        Dim dataLivro As Date = rs.Fields.Item("dataTarv2").Value
+
+                        Dim livroTARVEncounterID As Integer = EncounterDAO.insertEncounterByParam(33, patientID, locationid, 129, dataLivro, 14, openMRSProviderID)
+
+                        'Livro
+                        obs = New Obs
+                        obs.location_id = locationid
+                        obs.person_id = patientID
+                        obs.date_created = Now
+                        obs.voided = 0
+                        obs.encounter_id = livroTARVEncounterID
+                        obs.obs_datetime = dataLivro
+                        obs.data_Type = ObsDataType.TCoded
+                        obs.concept_id = 6264
+                        obs.value_coded = IIf(nLivro = 1, 6261, 6262)
+                        dataArray.Add(obs)
+
+                        obs = New Obs
+                        obs.location_id = locationid
+                        obs.person_id = patientID
+                        obs.date_created = Now
+                        obs.voided = 0
+                        obs.encounter_id = livroTARVEncounterID
+                        obs.obs_datetime = dataLivro
+                        obs.data_Type = ObsDataType.TNumeric
+                        obs.concept_id = 6266
+                        obs.value_numeric = nPagina
+                        dataArray.Add(obs)
+
+                        obs = New Obs
+                        obs.location_id = locationid
+                        obs.person_id = patientID
+                        obs.date_created = Now
+                        obs.voided = 0
+                        obs.encounter_id = livroTARVEncounterID
+                        obs.obs_datetime = dataLivro
+                        obs.data_Type = ObsDataType.TNumeric
+                        obs.concept_id = 6268
+                        obs.value_numeric = nLinha
+                        dataArray.Add(obs)
+
+                        For Each o As Obs In dataArray
+                            ObsDAO.insertObs(o, False)
+                        Next
+                    End If
+                End If
+
+
+
                 ProcessoParteB.importProcessoBCrianca(nid, locationid, patientID)
                 rs.MoveNext()
             End While

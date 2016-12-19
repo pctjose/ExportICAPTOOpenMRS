@@ -198,70 +198,70 @@ Public Class frmMain
         autil.importAdulto(LocationID)
         Me.Progress.Value = 40
 
-        encherDataFim()
+        'encherDataFim()
 
-        encherTempo("Consultas de Seguimento")
+        'encherTempo("Consultas de Seguimento")
 
-        Me.lblMessage.Text = "Importing Seguimento..."
-        Me.StatusStrip1.Refresh()
-        SeguimentoUtils.importSeguimento(ICAPConection, LocationID)
-        Me.Progress.Value = 60
+        'Me.lblMessage.Text = "Importing Seguimento..."
+        'Me.StatusStrip1.Refresh()
+        'SeguimentoUtils.importSeguimento(ICAPConection, LocationID)
+        'Me.Progress.Value = 60
 
-        encherDataFim()
+        'encherDataFim()
 
-        encherTempo("Consultas de FRIDA")
+        'encherTempo("Consultas de FRIDA")
 
-        Me.lblMessage.Text = "Importing FRIDA..."
-        Me.StatusStrip1.Refresh()
-        FridaUtils.ImportFRIDA(ICAPConection, LocationID)
-        Me.Progress.Value = 70
+        'Me.lblMessage.Text = "Importing FRIDA..."
+        'Me.StatusStrip1.Refresh()
+        'FridaUtils.ImportFRIDA(ICAPConection, LocationID)
+        'Me.Progress.Value = 70
 
-        encherDataFim()
+        'encherDataFim()
 
 
-        encherTempo("Laboratorio")
+        'encherTempo("Laboratorio")
 
-        Me.lblMessage.Text = "Importing Laboratorio..."
-        Me.StatusStrip1.Refresh()
-        LabUtils.ImportLabReal(ICAPConection, LocationID)
-        Me.Progress.Value = 80
+        'Me.lblMessage.Text = "Importing Laboratorio..."
+        'Me.StatusStrip1.Refresh()
+        'LabUtils.ImportLabReal(ICAPConection, LocationID)
+        'Me.Progress.Value = 80
 
-        encherDataFim()
+        'encherDataFim()
 
-        encherTempo("Aconselhamento Pre-Tarv")
+        'encherTempo("Aconselhamento Pre-Tarv")
 
-        Me.lblMessage.Text = "Importing Aconselhamento..."
-        Me.StatusStrip1.Refresh()
-        AconselhamentoUtils.ImportAconselhamento(ICAPConection, LocationID)
-        Me.Progress.Value = 90
+        'Me.lblMessage.Text = "Importing Aconselhamento..."
+        'Me.StatusStrip1.Refresh()
+        'AconselhamentoUtils.ImportAconselhamento(ICAPConection, LocationID)
+        'Me.Progress.Value = 90
 
-        encherDataFim()
+        'encherDataFim()
 
-        encherTempo("Rastreio de Tuberculose")
+        'encherTempo("Rastreio de Tuberculose")
 
-        Me.lblMessage.Text = "Importing Rastreio de Tuberculose..."
-        Me.StatusStrip1.Refresh()
-        TuberculoseRastreioUtils.ImportTuberculoseReal(ICAPConection, LocationID)
+        'Me.lblMessage.Text = "Importing Rastreio de Tuberculose..."
+        'Me.StatusStrip1.Refresh()
+        'TuberculoseRastreioUtils.ImportTuberculoseReal(ICAPConection, LocationID)
 
-        encherDataFim()
+        'encherDataFim()
 
-        encherTempo("Tratamento de Tuberculose")
+        'encherTempo("Tratamento de Tuberculose")
 
-        Me.lblMessage.Text = "Importing Tratamento de Tuberculose..."
-        Me.StatusStrip1.Refresh()
-        TuberculoseTratamento.ImportTuberculoseTratamento(ICAPConection, LocationID)
-        Me.Progress.Value = 95
+        'Me.lblMessage.Text = "Importing Tratamento de Tuberculose..."
+        'Me.StatusStrip1.Refresh()
+        'TuberculoseTratamento.ImportTuberculoseTratamento(ICAPConection, LocationID)
+        'Me.Progress.Value = 95
 
-        encherDataFim()
+        'encherDataFim()
 
-        encherTempo("Actualizando Segundo Sitio")
+        'encherTempo("Actualizando Segundo Sitio")
 
-        Me.lblMessage.Text = "Updating Secondary Site..."
-        Me.StatusStrip1.Refresh()
-        ManageSegundoSitio.UpdateSegundoSitio(ICAPConection, LocationID)
-        Me.Progress.Value = 100
+        'Me.lblMessage.Text = "Updating Secondary Site..."
+        'Me.StatusStrip1.Refresh()
+        'ManageSegundoSitio.UpdateSegundoSitio(ICAPConection, LocationID)
+        'Me.Progress.Value = 100
 
-        encherDataFim()
+        'encherDataFim()
 
         Me.lblMessage.Text = "Importação Terminada (Finishied)"
         Me.StatusStrip1.Refresh()

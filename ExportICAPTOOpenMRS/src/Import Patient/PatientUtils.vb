@@ -178,7 +178,7 @@ Public Class PatientUtils
                             cmmDestino.ExecuteNonQuery()
                         End If
 
-                        cmmDestino.CommandText = "Insert into person_address(person_id,preferred,address1,state_province,country,creator,date_created,county_district,neighborhood_cell,subregion,uuid)" & _
+                        cmmDestino.CommandText = "Insert into person_address(person_id,preferred,address1,state_province,country,creator,date_created,county_district,address3,address5,uuid)" & _
                         " values(" & patientID & ",1,'" & MySQLScape(avenida) & "','Zambezia','Mozambique',22,now(),'" & MySQLScape(distrito) & "','" & MySQLScape(celula) & "','" & MySQLScape(bairro) & "',uuid())"
                         cmmDestino.ExecuteNonQuery()
 

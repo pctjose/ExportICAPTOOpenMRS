@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{18F557B8-D4ED-4E89-B6BB-2A3C3FEED198}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -115,10 +115,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Aconselhamento\AconselhamentoUtils.vb" />
+    <Compile Include="Apsspp\ApssppUtil.vb" />
     <Compile Include="CCR\ImportChildDemographics.vb" />
     <Compile Include="Common Class\Connexao.vb" />
     <Compile Include="Common Class\printReport.vb" />
     <Compile Include="Common Class\Utilitario.vb" />
+    <Compile Include="Encounter\Encounter.vb" />
+    <Compile Include="Encounter\EncounterDAO.vb" />
+    <Compile Include="Encounter\EncounterProvider.vb" />
     <Compile Include="Forms\frmExportCCR.Designer.vb">
       <DependentUpon>frmExportCCR.vb</DependentUpon>
     </Compile>
@@ -152,12 +156,18 @@
     </Compile>
     <Compile Include="Obs\Obs.vb" />
     <Compile Include="Obs\ObsDAO.vb" />
+    <Compile Include="PatientProgram\PatientProgamDAO.vb" />
+    <Compile Include="PatientProgram\PatientProgram.vb" />
+    <Compile Include="PatientProgram\PatientState.vb" />
     <Compile Include="Processo\ProcessoParteB.vb" />
     <Compile Include="Processo\ProcessoUtils.vb" />
+    <Compile Include="Processo\UpdatePatientProgram.vb" />
     <Compile Include="Seguimento\SeguimentoUtils.vb" />
     <Compile Include="Segundo Sitio\ManageSegundoSitio.vb" />
     <Compile Include="Tuberculose\TuberculoseRastreioUtils.vb" />
     <Compile Include="Tuberculose\TuberculoseTratamento.vb" />
+    <Compile Include="Visita\Visita.vb" />
+    <Compile Include="Visita\VisitaDAO.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Forms\frmExportCCR.resx">
