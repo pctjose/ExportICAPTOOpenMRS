@@ -9,9 +9,9 @@ Public Class TuberculoseRastreioUtils
             .ActiveConnection = fonte
             .CommandType = CommandType.Text
             If AllPatients Then
-                .CommandText = "Select distinct nid from t_paciente inner join t_questionariotb on t_paciente.nid=t_questionariotb.nid"
+                .CommandText = "Select distinct t_questionariotb.nid from t_paciente inner join t_questionariotb on t_paciente.nid=t_questionariotb.nid"
             Else
-                .CommandText = "Select distinct nid from t_paciente inner join t_questionariotb on t_paciente.nid=t_questionariotb.nid where nid in (" & whereQuery & ")"
+                .CommandText = "Select distinct t_questionariotb.nid from t_paciente inner join t_questionariotb on t_paciente.nid=t_questionariotb.nid where t_questionariotb.nid in (" & whereQuery & ")"
 
             End If
 

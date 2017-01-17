@@ -274,23 +274,23 @@ Public Class frmMain
 
         encherDataFim()
 
-        'encherTempo("Tratamento de Tuberculose")
+        encherTempo("Tratamento de Tuberculose")
 
-        'Me.lblMessage.Text = "Importing Tratamento de Tuberculose..."
-        'Me.StatusStrip1.Refresh()
-        'TuberculoseTratamento.ImportTuberculoseTratamento(ICAPConection, LocationID)
-        'Me.Progress.Value = 95
+        Me.lblMessage.Text = "Importing Tratamento de Tuberculose..."
+        Me.StatusStrip1.Refresh()
+        TuberculoseTratamento.ImportTuberculoseTratamento(ICAPConection, LocationID)
+        Me.Progress.Value = 95
 
-        'encherDataFim()
+        encherDataFim()
 
-        'encherTempo("Actualizando Segundo Sitio")
+        encherTempo("Actualizando Segundo Sitio")
 
-        'Me.lblMessage.Text = "Updating Secondary Site..."
-        'Me.StatusStrip1.Refresh()
-        'ManageSegundoSitio.UpdateSegundoSitio(ICAPConection, LocationID)
-        'Me.Progress.Value = 100
+        Me.lblMessage.Text = "Updating Secondary Site..."
+        Me.StatusStrip1.Refresh()
+        ManageSegundoSitio.UpdateSegundoSitio(ICAPConection, LocationID)
+        Me.Progress.Value = 100
 
-        'encherDataFim()
+        encherDataFim()
 
         Me.lblMessage.Text = "Importação Terminada (Finishied)"
         Me.StatusStrip1.Refresh()

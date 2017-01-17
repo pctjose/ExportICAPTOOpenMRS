@@ -36,6 +36,7 @@ Public Class EncounterDAO
         Dim cmmD As New MySqlCommand
         Dim encounterVisitId As Integer
         Dim returnEncounterId As Integer
+        If providerId = 27 Then providerId = 1
         encounterVisitId = VisitaDAO.getVisitaIdByPatientAndStartDate(patientId, encounterDate)
 
         If encounterVisitId = 0 Then
@@ -55,7 +56,7 @@ Public Class EncounterDAO
             returnEncounterId = .ExecuteScalar
 
             .CommandText = "insert into encounter_provider(encounter_id,provider_id,encounter_role_id,creator,date_created,uuid) " & _
-                            " values(" & returnEncounterId & "," & providerId & ",1,22,now(),uuid()"
+                            " values(" & returnEncounterId & "," & providerId & ",1,22,now(),uuid())"
             .ExecuteNonQuery()
 
             Return returnEncounterId

@@ -10,13 +10,13 @@ Public Class GaacUtils
             .Connection = ConexaoOpenMRS3
 
             If dataDesintegracao = Nothing Then
-                .CommandText = "insert into gaac(name,gaac_identifier,start_date,focal_patient_id,affinity_type,location_id,creator,date_created,uuid) " & _
+                .CommandText = "insert into gaac(name,gaac_identifier,start_date,focal_patient_id,affinity_type,location_id,creator,date_created,uuid,changed_by,date_changed,end_date) " & _
                                 " values('" & name & "','" & identifier & "','" & dataMySQL(datainicio) & "'," & pontoFocal & ", " & afinidade & "," & location & "," & _
-                                " 22,now(),uuid())"
+                                " 22,now(),uuid(),null,null,null)"
             Else
-                .CommandText = "insert into gaac(name,gaac_identifier,start_date,focal_patient_id,affinity_type,location_id,crumbled,date_crumbled,creator,date_created,uuid) " & _
+                .CommandText = "insert into gaac(name,gaac_identifier,start_date,focal_patient_id,affinity_type,location_id,crumbled,date_crumbled,creator,date_created,uuid,changed_by,date_changed,end_date) " & _
                                 " values('" & name & "','" & identifier & "','" & dataMySQL(datainicio) & "'," & pontoFocal & ", " & afinidade & "," & location & ",1,'" & dataMySQL(dataDesintegracao) & "'," & _
-                                " 22,now(),uuid())"
+                                " 22,now(),uuid(),null,null,null)"
 
             End If
 

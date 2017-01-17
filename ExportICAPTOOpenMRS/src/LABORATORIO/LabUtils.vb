@@ -10,7 +10,7 @@ Public Class LabUtils
             If AllPatients Then
                 .CommandText = "Select distinct t_paciente.nid from t_paciente inner join t_resultadoslaboratorio on t_paciente.nid=t_resultadoslaboratorio.nid"
             Else
-                .CommandText = "Select distinct t_paciente.nid from t_paciente inner join t_resultadoslaboratorio on t_paciente.nid=t_resultadoslaboratorio.nid where nid in (" & whereQuery & ")"
+                .CommandText = "Select distinct t_paciente.nid from t_paciente inner join t_resultadoslaboratorio on t_paciente.nid=t_resultadoslaboratorio.nid where t_resultadoslaboratorio.nid in (" & whereQuery & ")"
             End If
 
             rs = .Execute

@@ -1256,7 +1256,8 @@ Public Class SeguimentoUtils
         Dim nid As String
 
         Dim dataSeguimento As Date
-        Dim idSeguimento, encounterID As Integer
+        Dim idSeguimento As Integer
+        'encounterID As Integer
         Dim estadioOms As String
         Dim dataProxima As Date
         Dim gravidaz As String
@@ -1273,7 +1274,7 @@ Public Class SeguimentoUtils
         'Try
         Dim cmmFonte As New Command 'Acess
         Dim rs As New Recordset
-        Dim cmmDestino As New MySqlCommand 'MySQL
+        'Dim cmmDestino As New MySqlCommand 'MySQL
 
         cmmFonte.CommandType = CommandTypeEnum.adCmdText
         cmmFonte.ActiveConnection = fonte
@@ -1285,7 +1286,7 @@ Public Class SeguimentoUtils
                                             "Q_seguimento.sintomasTb,Q_seguimento.dataParto,Q_seguimento.lactante,Q_seguimento.temperatura,Q_seguimento.tensaoInferior,Q_seguimento.tensaosuperior,Q_seguimento.tipopaciente, " & _
                                             "Q_seguimento.peso,Q_seguimento.altura,Q_seguimento.perimetroBraquial,Q_seguimento.imc,Q_seguimento.imcPorIdade,Q_seguimento.pesoPorEstatura,Q_seguimento.diagnosticoNutricional, " & _
                                             "Q_seguimento.tratamentoNutricional,Q_seguimento.densPsicoMotor,Q_seguimento.investigacaoTb,Q_seguimento.genexpert,Q_seguimento.datainiciotarv,Q_seguimento.tiposeguimento, " & _
-                                            "Q_seguimento.tipotarv,Q_seguimento.motivo,Q_seguimento.codregime,Q_seguimento.motivoInicioTarv " & _
+                                            "Q_seguimento.tipotarv,Q_seguimento.codmudanca,Q_seguimento.codregime,Q_seguimento.motivoInicioTarv " & _
                                 " FROM Q_seguimento order by Q_seguimento.nid "
         Else
 
@@ -1296,15 +1297,15 @@ Public Class SeguimentoUtils
                                             "Q_seguimento.sintomasTb,Q_seguimento.dataParto,Q_seguimento.lactante,Q_seguimento.temperatura,Q_seguimento.tensaoInferior,Q_seguimento.tensaosuperior,Q_seguimento.tipopaciente, " & _
                                             "Q_seguimento.peso,Q_seguimento.altura,Q_seguimento.perimetroBraquial,Q_seguimento.imc,Q_seguimento.imcPorIdade,Q_seguimento.pesoPorEstatura,Q_seguimento.diagnosticoNutricional, " & _
                                             "Q_seguimento.tratamentoNutricional,Q_seguimento.densPsicoMotor,Q_seguimento.investigacaoTb,Q_seguimento.genexpert,Q_seguimento.datainiciotarv,Q_seguimento.tiposeguimento, " & _
-                                            "Q_seguimento.tipotarv,Q_seguimento.motivo,Q_seguimento.codregime,Q_seguimento.motivoInicioTarv " & _
+                                            "Q_seguimento.tipotarv,Q_seguimento.codmudanca,Q_seguimento.codregime,Q_seguimento.motivoInicioTarv " & _
                                 " FROM Q_seguimento where nid in (" & whereQuery & ") order by Q_seguimento.nid "
 
 
            
         End If
 
-        cmmDestino.CommandType = CommandType.Text
-        cmmDestino.Connection = ConexaoOpenMRS3
+        'cmmDestino.CommandType = CommandType.Text
+        'cmmDestino.Connection = ConexaoOpenMRS3
 
         rs = cmmFonte.Execute
 
@@ -1345,16 +1346,16 @@ Public Class SeguimentoUtils
                     If tipoPaciente = "Adulto" Or tipoPaciente = "adulto" Then
 
                         If tiposeguimento = "Seguinte" Then
-                            encounterID = EncounterDAO.insertEncounterByParam(6, patientID, locationid, 126, dataSeguimento, 3, 27)
+                            encounter_id = EncounterDAO.insertEncounterByParam(6, patientID, locationid, 126, dataSeguimento, 3, 27)
                         Else
-                            encounterID = EncounterDAO.insertEncounterByParam(6, patientID, locationid, 126, dataSeguimento, 5, 27)
+                            encounter_id = EncounterDAO.insertEncounterByParam(6, patientID, locationid, 126, dataSeguimento, 5, 27)
                         End If
 
                     ElseIf tipoPaciente = "Crianca" Or tipoPaciente = "Criança" Then
                         If tiposeguimento = "Seguinte" Then
-                            encounterID = EncounterDAO.insertEncounterByParam(9, patientID, locationid, 127, dataSeguimento, 3, 27)
+                            encounter_id = EncounterDAO.insertEncounterByParam(9, patientID, locationid, 127, dataSeguimento, 3, 27)
                         Else
-                            encounterID = EncounterDAO.insertEncounterByParam(9, patientID, locationid, 127, dataSeguimento, 5, 27)
+                            encounter_id = EncounterDAO.insertEncounterByParam(9, patientID, locationid, 127, dataSeguimento, 5, 27)
                         End If
 
                     End If
@@ -1758,8 +1759,8 @@ Public Class SeguimentoUtils
                         ObsDAO.insertObs(obs, False)
                     End If
 
-                    If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "motivo")) Then
-                        obs.value_coded = FILAUtils.getCodMudancaConceptID(rs.Fields.Item("motivo").Value)
+                    If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "codmudanca")) Then
+                        obs.value_coded = FILAUtils.getCodMudancaConceptID(rs.Fields.Item("codmudanca").Value)
                         obs.data_Type = ObsDataType.TCoded
                         obs.concept_id = 1792
                         ObsDAO.insertObs(obs, False)

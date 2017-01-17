@@ -128,3 +128,5 @@ C:\dev\repositorio\ExportICAPTOOpenMRS\ExportICAPTOOpenMRS\src\obj\Debug\ExportI
 C:\dev\repositorio\ExportICAPTOOpenMRS\ExportICAPTOOpenMRS\src\obj\Debug\ExportICAPTOOpenMRS.frmMain.resources
 C:\dev\repositorio\ExportICAPTOOpenMRS\ExportICAPTOOpenMRS\src\obj\Debug\ExportICAPTOOpenMRS.Resources.resources
 C:\dev\repositorio\ExportICAPTOOpenMRS\ExportICAPTOOpenMRS\src\obj\Debug\ExportICAPTOOpenMRS.vbproj.GenerateResource.Cache
+C:\dev\repositorio\ExportICAPTOOpenMRS\ExportICAPTOOpenMRS\src\bin\Debug\CrystalDecisions.CrystalReports.Engine.dll
+C:\dev\repositorio\ExportICAPTOOpenMRS\ExportICAPTOOpenMRS\src\bin\Debug\CrystalDecisions.Shared.dll

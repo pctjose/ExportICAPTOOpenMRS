@@ -67,43 +67,43 @@
         End Try
     End Sub
     Public Shared Sub ImportGaac(ByVal fonte As Connection, ByVal location As Integer)
-        Try
-            Dim rs As New Recordset
+        'Try
+        Dim rs As New Recordset
 
-            rs.Open("Select distinct numGAAC,datainicio,afinidade,dataDesintegracao,nidPontoFocal,observacao from t_gaac", fonte, CursorTypeEnum.adOpenDynamic, LockTypeEnum.adLockReadOnly)
+        rs.Open("Select distinct numGAAC,datainicio,afinidade,dataDesintegracao,nidPontoFocal,observacao from t_gaac", fonte, CursorTypeEnum.adOpenDynamic, LockTypeEnum.adLockReadOnly)
 
-            If Not (rs.EOF And rs.BOF) Then
+        If Not (rs.EOF And rs.BOF) Then
 
-                rs.MoveFirst()
+            rs.MoveFirst()
 
-                While Not rs.EOF
+            While Not rs.EOF
 
-                    Dim pontoFocal As Integer = GetPatientOpenMRSIDByNID(rs.Fields.Item("nidPontoFocal").Value)
+                Dim pontoFocal As Integer = GetPatientOpenMRSIDByNID(rs.Fields.Item("nidPontoFocal").Value)
 
-                    If pontoFocal > 0 Then
+                If pontoFocal > 0 Then
 
-                        Dim numGaac As Integer = rs.Fields.Item("numGAAC").Value
-                        Dim afinity As String = rs.Fields.Item("afinidade").Value
-                        Dim dataInicio As Date = rs.Fields.Item("datainicio").Value
-                        Dim dataDesintegracao As Date = Nothing
+                    Dim numGaac As Integer = rs.Fields.Item("numGAAC").Value
+                    Dim afinity As String = rs.Fields.Item("afinidade").Value
+                    Dim dataInicio As Date = rs.Fields.Item("datainicio").Value
+                    Dim dataDesintegracao As Date = Nothing
 
-                        If Not IsDBNull(rs.Fields.Item("dataDesintegracao").Value) Then
-                            dataDesintegracao = rs.Fields.Item("dataDesintegracao").Value
-                        End If
-
-                        Dim gaacID As Integer = GaacUtils.insertGaacByParam(numGaac.ToString, numGaac & "-" & afinity, dataInicio, getTipoAfinidadeGaac(afinity), pontoFocal, location, dataDesintegracao)
-
-                        ImportGaacMember(fonte, numGaac, gaacID)
+                    If Not IsDBNull(rs.Fields.Item("dataDesintegracao").Value) Then
+                        dataDesintegracao = rs.Fields.Item("dataDesintegracao").Value
                     End If
 
-                    rs.MoveNext()
-                End While
-                rs.Close()
-            End If
+                    Dim gaacID As Integer = GaacUtils.insertGaacByParam(numGaac.ToString, numGaac & "-" & afinity, dataInicio, getTipoAfinidadeGaac(afinity), pontoFocal, location, dataDesintegracao)
 
-        Catch ex As Exception
-            MsgBox("Error Importing Gaac: " & ex.Message)
+                    ImportGaacMember(fonte, numGaac, gaacID)
+                End If
 
-        End Try
+                rs.MoveNext()
+            End While
+            rs.Close()
+        End If
+
+        'Catch ex As Exception
+        '    MsgBox("Error Importing Gaac: " & ex.Message)
+
+        'End Try
     End Sub
 End Class
