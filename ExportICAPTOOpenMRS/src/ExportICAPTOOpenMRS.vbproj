@@ -136,7 +136,7 @@
       <DependentUpon>frmMain.vb</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FRIDA\FILAUtils.vb" />
+    <Compile Include="FILA\FILAUtils.vb" />
     <Compile Include="Gaac\GAAC.vb" />
     <Compile Include="Gaac\GaacUtils.vb" />
     <Compile Include="Import Patient\PatientUtils.vb" />
