@@ -37,7 +37,7 @@ Public Class AconselhamentoUtils
                 " t_aconselhamento.datapronto, t_aconselhamento.obs, " & _
                 " t_actividadeaconselhamento.data, t_actividadeaconselhamento.nrsessao, " & _
                 " t_actividadeaconselhamento.tipoactividade, t_actividadeaconselhamento.apresentouconfidente " & _
-                " FROM t_aconselhamento INNER JOIN t_actividadeaconselhamento ON " & _
+                " FROM (t_paciente INNER JOIN t_aconselhamento on t_paciente.nid=t_aconselhamento.nid)  INNER JOIN t_actividadeaconselhamento ON " & _
                 " t_aconselhamento.idaconselhamento = t_actividadeaconselhamento.idaconselhamento and " & _
                 " t_aconselhamento.nid = t_actividadeaconselhamento.nid "
                 Else
@@ -49,7 +49,7 @@ Public Class AconselhamentoUtils
                 " t_aconselhamento.datapronto, t_aconselhamento.obs, " & _
                 " t_actividadeaconselhamento.data, t_actividadeaconselhamento.nrsessao, " & _
                 " t_actividadeaconselhamento.tipoactividade, t_actividadeaconselhamento.apresentouconfidente " & _
-                " FROM t_aconselhamento INNER JOIN t_actividadeaconselhamento ON " & _
+                " FROM (t_paciente INNER JOIN t_aconselhamento on t_paciente.nid=t_aconselhamento.nid) INNER JOIN t_actividadeaconselhamento ON " & _
                 " t_aconselhamento.idaconselhamento = t_actividadeaconselhamento.idaconselhamento and " & _
                 " t_aconselhamento.nid = t_actividadeaconselhamento.nid " & _
                 " where t_aconselhamento.nid in (" & whereQuery & ")"
@@ -63,19 +63,14 @@ Public Class AconselhamentoUtils
                     rs.MoveFirst()
                     While Not rs.EOF
                         nid = rs.Fields.Item("nid").Value
-                        patientID = GetPatientOpenMRSIDByNID(rs.Fields.Item("nid").Value) 'Get the openmrs patient_id using the NID
+
+                        patientID = GetPatientOpenMRSIDByNID(nid) 'Get the openmrs patient_id using the NID
 
                         If patientID > 0 Then
 
-                            'End If
-                            cmmDestino.CommandText = "Insert into encounter(encounter_type,patient_id,provider_id,location_id," & _
-                                                    "form_id,encounter_datetime,creator,date_created,voided,uuid) values(19," & patientID & ",27," & locationid & "," & _
-                                                    "115,'" & dataMySQL(rs.Fields.Item("data").Value) & "',22,now(),0,uuid())"
-                            cmmDestino.ExecuteNonQuery()
-                            'Get The encounter id to user in obs table
-                            cmmDestino.CommandText = "Select max(encounter_id) from encounter"
-                            encounter_id = cmmDestino.ExecuteScalar
+                            
 
+                            encounter_id = EncounterDAO.insertEncounterByParam(19, patientID, locationid, 115, dataMySQL(rs.Fields.Item("data").Value), 10, 27)
 
                             o.date_created = Now
                             o.encounter_id = encounter_id
@@ -230,15 +225,14 @@ Public Class AconselhamentoUtils
 
                 rs.MoveNext()
                     End While
-                '.Connection.close()
-                '.Connection.Dispose()
+
                 rs.Close()
                 End If
             End With
         Catch ex As Exception
-            'MsgBox(nid)
+
             MsgBox("Error Importing Aconselhamento: " & ex.Message)
-            'Nerros += 1
+
         End Try
     End Sub
 End Class

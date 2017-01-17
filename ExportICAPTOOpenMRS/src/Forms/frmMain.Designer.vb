@@ -124,7 +124,7 @@ Partial Class frmMain
         Me.cboLocation.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cboLocation.ForeColor = System.Drawing.SystemColors.ControlText
         Me.cboLocation.FormattingEnabled = True
-        Me.cboLocation.Items.AddRange(New Object() {"GILE", "ILE", "INHASSUNGE", "LUGELA", "MOLOCUE", "NAMACURRA", "MACUSE"})
+        Me.cboLocation.Items.AddRange(New Object() {"GILE", "ILE", "INHASSUNGE", "LUGELA", "MOLOCUE", "NAMACURRA", "MACUSE", "CS 17 SETEMBRO", "CS COALANE", "CS CHABECO"})
         Me.cboLocation.Location = New System.Drawing.Point(111, 63)
         Me.cboLocation.Name = "cboLocation"
         Me.cboLocation.Size = New System.Drawing.Size(132, 24)

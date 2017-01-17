@@ -1,6 +1,6 @@
 ﻿Imports ADODB
 Imports MySql.Data.MySqlClient
-Public Class FridaUtils
+Public Class FILAUtils
     Public Shared Function getTipoTarvConceptID(ByVal tipo As String) As Integer
         Select Case tipo
             Case "Manter"
@@ -22,19 +22,31 @@ Public Class FridaUtils
         End Select
     End Function
     Public Shared Function getRegimeTerapeuticoConceptID(ByVal regime As String) As Integer
-        regime = regime.ToUpper
+
         Select Case regime
+            Case "TDF+3TC+EFV"
+                Return 6324
+            Case "TDF+3TC+LPV/r"
+                Return 6108
+            Case "TDF+3TC+NVP"
+                Return 6243
+            Case "TDF+3TC+RAL+DRV/r"
+                Return 6329
+            Case "TDF+ABC+LPV/r"
+                Return 6234
+            Case "TDF+AZT+3TC+LPV/r"
+                Return 6107
             Case "AZT+3TC+NFV"
                 Return 1702
-            Case "AZT+3TC+ABC"
+            Case "AZT+3TC+ABC", "AZT 60+3TC+ABC", "AZT 60+3TC+ABC (2DFC + ABC)"
                 Return 817
-            Case "AZT+3TC+EFV"
+            Case "AZT+3TC+EFV", "AZT 60+3TC+EFV (2DFC + EFV)"
                 Return 1703
-            Case "AZT+3TC+NVP"
+            Case "AZT+3TC+NVP", "AZT60+3TC+NVP (3DFC)"
                 Return 1651
             Case "AZT+DDI+NFV", "AZT+DDL+NFV"
                 Return 1700
-            Case "D4T+3TC+EFV"
+            Case "D4T+3TC+EFV", "d4T+3TC+ EFV"
                 Return 1827
             Case "D4T+3TC+NVP"
                 Return 792
@@ -42,14 +54,38 @@ Public Class FridaUtils
                 Return 792
             Case "D4T40+3TC+EFV", "D4T30+3TC+EFV"
                 Return 1827
-            Case "D4T40+3TC+NVP"
+            Case "D4T40+3TC+NVP", "d4t20+3tc+nvp"
                 Return 792
-            Case "DAT30+3TC+ABC", "D4T30+3TC+ABC", "D4T40+3TC+ABC"
+            Case "DAT30+3TC+ABC", "D4T30+3TC+ABC", "D4T40+3TC+ABC", "d4T+3TC+ABC"
                 Return 6102
-            Case "D4T6+3TC+NVP(3DFC BABY)"
+            Case "D4T6+3TC+NVP(3DFC BABY)", "d4T+3TC+NVP (3DFC Baby )"
                 Return 6110
-            Case "D4T30+DDI+NVP", "D4T30+DDL+NVP"
+            Case "D4T30+DDI+NVP", "D4T30+DDL+NVP", "d4T40+Ddl+NVP"
                 Return 6242
+            Case "ABC+3TC + LPV200/r50", "ABC+3TC+LPV", "ABC+3TC+LPV200/r50"
+                Return 1311
+            Case "ABC+3TC+EFV"
+                Return 6104
+            Case "ABC+3TC+LPV/r"
+                Return 1313
+            Case "ABC+3TC+NVP"
+                Return 6105
+            Case "AZT 60+3TC+LPV/r(2DFC+LPV/r)", "AZT+3TC+LPV/r"
+                Return 6100
+            Case "AZT+3TC+ABC+LPV/r"
+                Return 6326
+            Case "AZT+3TC+ddI+LPV/r"
+                Return 6233
+            Case "AZT+ddI+LPV/r"
+                Return 6109
+            Case "d4t+3TC+ABC+EFV"
+                Return 6327
+            Case "d4t+3TC+ABC+LPV/r"
+                Return 6325
+            Case "d4t+3TC+LPV/r"
+                Return 6103
+            Case "d4T+3TC+LPV/r(2DFC Baby+LPV/r)"
+                Return 6113
             Case Else
                 Return 5424
         End Select
@@ -73,14 +109,28 @@ Public Class FridaUtils
                 Return 5622
         End Select
     End Function
-    Public Shared Sub ImportFRIDA(ByVal fonte As Connection, ByVal locationid As Int16)
-        Dim patientID As Integer
-        'Dim regime As Integer
-        Dim tipo As Integer
-        Dim encounterid As Integer
+    Public Shared Function getCodMudancaConceptID(ByVal mudanca As String) As Integer
 
-        'Dim saldo As Integer
-        'Dim quantidade As Integer
+        Select Case mudanca
+            Case "Anemia (A)"
+                Return 3
+            Case "Ausência de Eficácia Inicial"
+                Return 1789
+            Case "Falencia terapeutica (FT)", "Falha Terapêutica Laboratorial", "Falha Terapêutica Clínica"
+                Return 1790
+            Case "Gravidez (Gr)"
+                Return 1982
+            Case "Intolerância"
+                Return 987
+            Case "Tb", "Tuberculose (TB)"
+                Return 1264
+            Case Else
+                Return 5622
+        End Select
+    End Function
+    Public Shared Sub ImportFILA(ByVal fonte As Connection, ByVal locationid As Int16)
+        Dim patientID As Integer
+        Dim encounterid As Integer
         Dim dataProxima As Date
         Dim dataArray As New ArrayList
         Dim obs As New Obs
@@ -89,230 +139,130 @@ Public Class FridaUtils
         Try
 
             Dim cmmFonte As New Command 'Acess
-            Dim cmmDestino As New MySqlCommand 'MySQL
+            'Dim cmmDestino As New MySqlCommand 'MySQL
             Dim rs As New Recordset
             Dim count As Int16 = 0
 
-            'cmmDestino.ActiveConnection = fonte
-            cmmDestino.CommandType = CommandTypeEnum.adCmdText
+
 
             With cmmFonte
                 .ActiveConnection = fonte
                 .CommandType = CommandType.Text
                 If AllPatients Then
-                    .CommandText = " Select nid,datatarv,codregime,dias," & _
-                                    " tipotarv,codmudanca,dataproxima,observacao," & _
-                                    " QtdComp,QtdSaldo,dataoutroservico " & _
-                                    " from t_tarv "
+                    .CommandText = "Select t_tarv.nid,datatarv,t_tarv.codregime,QtdComp,dose,dataproxima from t_paciente inner join t_tarv on t_paciente.nid=t_tarv.nid where t_tarv.nid is not null and t_tarv.datatarv is not null"
+
                 Else
-                    .CommandText = " Select nid,datatarv,codregime,dias," & _
-                                    " tipotarv,codmudanca,dataproxima,observacao," & _
-                                    " QtdComp,QtdSaldo,dataoutroservico " & _
-                                    " from t_tarv where nid in (" & whereQuery & ")"
+                    .CommandText = "Select t_tarv.nid,datatarv,t_tarv.codregime,QtdComp,dose,dataproxima from t_paciente inner join t_tarv on t_paciente.nid=t_tarv.nid where t_tarv.nid is not null and t_tarv.datatarv is not null and t_tarv.nid in (" & whereQuery & ")"
+
                 End If
 
                 rs = .Execute
                 If Not (rs.EOF And rs.BOF) Then
-                    cmmDestino.Connection = ConexaoOpenMRS1 'cone.conectar
-                    cmmDestino.CommandType = CommandType.Text
+
                     rs.MoveFirst()
                     While Not rs.EOF
 
-                        If Not IsDBNull(rs.Fields.Item("nid").Value) Then
+                        patientID = GetPatientOpenMRSIDByNID(rs.Fields.Item("nid").Value) 'Get the openmrs patient_id using the NID
 
+                        If patientID > 0 Then
+                            encounterDate = rs.Fields.Item("datatarv").Value
 
+                            encounterid = EncounterDAO.insertEncounterByParam(18, patientID, locationid, 130, encounterDate, 8, 27)
 
-                            patientID = GetPatientOpenMRSIDByNID(rs.Fields.Item("nid").Value) 'Get the openmrs patient_id using the NID
-
-                            If patientID > 0 Then
-                                encounterDate = rs.Fields.Item("datatarv").Value
-                                If Not TemFridaNestaData(patientID, encounterDate) Then
-
-
-                                    cmmDestino.CommandText = "Insert into encounter(encounter_type,patient_id,provider_id,location_id," & _
-                                                            "form_id,encounter_datetime,creator,date_created,voided,uuid) values(18," & patientID & ",27," & locationid & "," & _
-                                                            "117,'" & dataMySQL(encounterDate) & "',22,now(),0,uuid())"
-                                    cmmDestino.ExecuteNonQuery()
-                                    'Get The encounter id to user in obs table
-                                    cmmDestino.CommandText = "Select max(encounter_id) from encounter"
-                                    encounterid = cmmDestino.ExecuteScalar
-
-                                    tipo = getTipoTarvConceptID(rs.Fields.Item("tipotarv").Value)
-
-                                    If tipo = 1706 Or tipo = 1709 Then 'Saida Transferido para ou suspenso
-                                        'InsertObsQuestion(patientID, 1255, 1708, locationid, encounterid, rs.Fields.Item("datatarv").Value)
-                                        'InsertObsQuestion(patientID, 1708, tipo, locationid, encounterid, rs.Fields.Item("datatarv").Value)
-
-                                        If True Then
-                                            obs = New Obs
-                                            obs.location_id = locationid
-                                            obs.person_id = patientID
-                                            obs.date_created = Now
-                                            obs.voided = 0
-                                            obs.encounter_id = encounterid
-                                            obs.obs_datetime = encounterDate
-                                            obs.data_Type = ObsDataType.TCoded
-                                            obs.concept_id = 1255
-                                            obs.value_coded = 1708
-                                            dataArray.Add(obs)
-                                        End If
-                                        If True Then
-                                            obs = New Obs
-                                            obs.location_id = locationid
-                                            obs.person_id = patientID
-                                            obs.date_created = Now
-                                            obs.voided = 0
-                                            obs.encounter_id = encounterid
-                                            obs.obs_datetime = encounterDate
-                                            obs.data_Type = ObsDataType.TCoded
-                                            obs.concept_id = 1708
-                                            obs.value_coded = tipo
-                                            dataArray.Add(obs)
-                                        End If
-                                    Else
-                                        If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "QtdSaldo")) Then
-                                            obs = New Obs
-                                            obs.location_id = locationid
-                                            obs.person_id = patientID
-                                            obs.date_created = Now
-                                            obs.voided = 0
-                                            obs.encounter_id = encounterid
-                                            obs.obs_datetime = encounterDate
-                                            obs.data_Type = ObsDataType.TNumeric
-                                            obs.concept_id = 1713
-                                            obs.value_numeric = rs.Fields.Item("QtdSaldo").Value
-                                            dataArray.Add(obs)
-                                        End If
-                                        If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "QtdComp")) Then
-                                            obs = New Obs
-                                            obs.location_id = locationid
-                                            obs.person_id = patientID
-                                            obs.date_created = Now
-                                            obs.voided = 0
-                                            obs.encounter_id = encounterid
-                                            obs.obs_datetime = encounterDate
-                                            obs.data_Type = ObsDataType.TNumeric
-                                            obs.concept_id = 1715
-                                            obs.value_numeric = rs.Fields.Item("QtdComp").Value
-                                            dataArray.Add(obs)
-                                        End If
-                                        If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "QtdComp")) Then
-                                            obs = New Obs
-                                            obs.location_id = locationid
-                                            obs.person_id = patientID
-                                            obs.date_created = Now
-                                            obs.voided = 0
-                                            obs.encounter_id = encounterid
-                                            obs.obs_datetime = encounterDate
-                                            obs.data_Type = ObsDataType.TNumeric
-                                            obs.concept_id = 1712
-                                            obs.value_numeric = rs.Fields.Item("QtdComp").Value
-                                            dataArray.Add(obs)
-                                        End If
-
-                                        If IsDBNull(rs.Fields.Item("dataProxima").Value) Then
-                                            If Not IsDBNull(rs.Fields.Item("dias").Value) Then
-                                                dataProxima = DateAdd(DateInterval.Day, rs.Fields.Item("dias").Value, rs.Fields.Item("datatarv").Value)
-                                            Else
-                                                dataProxima = DateAdd(DateInterval.Day, 30, encounterDate)
-                                            End If
-                                        Else
-                                            dataProxima = rs.Fields.Item("dataProxima").Value
-                                        End If
-
-                                        If True Then
-                                            obs = New Obs
-                                            obs.location_id = locationid
-                                            obs.person_id = patientID
-                                            obs.date_created = Now
-                                            obs.voided = 0
-                                            obs.encounter_id = encounterid
-                                            obs.obs_datetime = encounterDate
-                                            obs.data_Type = ObsDataType.TDatetime
-                                            obs.concept_id = 5096
-                                            obs.value_datetime = dataProxima
-                                            dataArray.Add(obs)
-                                        End If
-
-                                        If True Then
-                                            obs = New Obs
-                                            obs.location_id = locationid
-                                            obs.person_id = patientID
-                                            obs.date_created = Now
-                                            obs.voided = 0
-                                            obs.encounter_id = encounterid
-                                            obs.obs_datetime = encounterDate
-                                            obs.data_Type = ObsDataType.TText
-                                            obs.concept_id = 1711
-                                            obs.value_text = "1-0-1"
-                                            dataArray.Add(obs)
-                                        End If
-
-                                        If True Then
-                                            obs = New Obs
-                                            obs.location_id = locationid
-                                            obs.person_id = patientID
-                                            obs.date_created = Now
-                                            obs.voided = 0
-                                            obs.encounter_id = encounterid
-                                            obs.obs_datetime = encounterDate
-                                            obs.data_Type = ObsDataType.TCoded
-                                            obs.concept_id = 1255
-                                            obs.value_coded = tipo
-                                            dataArray.Add(obs)
-                                        End If
-
-                                        If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "codregime")) Then
-                                            obs = New Obs
-                                            obs.location_id = locationid
-                                            obs.person_id = patientID
-                                            obs.date_created = Now
-                                            obs.voided = 0
-                                            obs.encounter_id = encounterid
-                                            obs.obs_datetime = encounterDate
-                                            obs.data_Type = ObsDataType.TCoded
-                                            obs.concept_id = 1088
-                                            obs.value_coded = getRegimeTerapeuticoConceptID(rs.Fields.Item("codregime").Value)
-                                            dataArray.Add(obs)
-                                        End If
-
-                                        If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "dataoutroservico")) Then
-                                            obs = New Obs
-                                            obs.location_id = locationid
-                                            obs.person_id = patientID
-                                            obs.date_created = Now
-                                            obs.voided = 0
-                                            obs.encounter_id = encounterid
-                                            obs.obs_datetime = encounterDate
-                                            obs.data_Type = ObsDataType.TDatetime
-                                            obs.concept_id = 1190
-                                            obs.value_datetime = rs.Fields.Item("dataoutroservico").Value
-                                            dataArray.Add(obs)
-                                        End If
-
-                                    End If
-
-                                    If dataArray.Count > 0 Then
-                                        For Each o As Obs In dataArray
-                                            ObsDAO.insertObs(o, False)
-                                        Next
-                                    End If
-
-                                    dataArray.Clear()
+                            If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "QtdComp")) Then
+                                Dim qty As Integer = rs.Fields.Item("QtdComp").Value
+                                If qty > 0 And qty <= 180 Then
+                                    obs = New Obs
+                                    obs.location_id = locationid
+                                    obs.person_id = patientID
+                                    obs.date_created = Now
+                                    obs.voided = 0
+                                    obs.encounter_id = encounterid
+                                    obs.obs_datetime = encounterDate
+                                    obs.data_Type = ObsDataType.TNumeric
+                                    obs.concept_id = 1715
+                                    obs.value_numeric = qty
+                                    dataArray.Add(obs)
                                 End If
+
                             End If
+
+
+                            If IsDBNull(rs.Fields.Item("dataProxima").Value) Then
+                                If Not IsDBNull(rs.Fields.Item("dias").Value) Then
+                                    dataProxima = DateAdd(DateInterval.Day, rs.Fields.Item("dias").Value, encounterDate)
+                                Else
+                                    dataProxima = DateAdd(DateInterval.Day, 30, encounterDate)
+                                End If
+                            Else
+                                dataProxima = rs.Fields.Item("dataProxima").Value
+                            End If
+
+                            If True Then
+                                obs = New Obs
+                                obs.location_id = locationid
+                                obs.person_id = patientID
+                                obs.date_created = Now
+                                obs.voided = 0
+                                obs.encounter_id = encounterid
+                                obs.obs_datetime = encounterDate
+                                obs.data_Type = ObsDataType.TDatetime
+                                obs.concept_id = 5096
+                                obs.value_datetime = dataProxima
+                                dataArray.Add(obs)
+                            End If
+
+
+                            If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "dose")) Then
+
+                                obs = New Obs
+                                obs.location_id = locationid
+                                obs.person_id = patientID
+                                obs.date_created = Now
+                                obs.voided = 0
+                                obs.encounter_id = encounterid
+                                obs.obs_datetime = encounterDate
+                                obs.data_Type = ObsDataType.TText
+                                obs.concept_id = 1711
+                                obs.value_text = rs.Fields.Item("dose").Value
+                                dataArray.Add(obs)
+
+                            End If
+
+                            If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "codregime")) Then
+                                obs = New Obs
+                                obs.location_id = locationid
+                                obs.person_id = patientID
+                                obs.date_created = Now
+                                obs.voided = 0
+                                obs.encounter_id = encounterid
+                                obs.obs_datetime = encounterDate
+                                obs.data_Type = ObsDataType.TCoded
+                                obs.concept_id = 1088
+                                obs.value_coded = getRegimeTerapeuticoConceptID(rs.Fields.Item("codregime").Value)
+                                dataArray.Add(obs)
+                            End If
+
+
+
+                            For Each o As Obs In dataArray
+                                ObsDAO.insertObs(o, False)
+                            Next
+
+
+                            dataArray.Clear()
                         End If
-                rs.MoveNext()
+
+
+                        rs.MoveNext()
                     End While
-                '.Connection.close()
-                '.Connection.Dispose()
-                rs.Close()
+                    rs.Close()
                 End If
             End With
-            ImportEstadoPaciente(fonte, locationid)
-            ImportHistoricoARV(fonte, locationid)
+            'ImportEstadoPaciente(fonte, locationid)
+            'ImportHistoricoARV(fonte, locationid)
         Catch ex As Exception
-            MsgBox("Erro ao FRIDA. " & ex.Message)
+            MsgBox("Erro ao FILA. " & ex.Message)
         End Try
     End Sub
     Public Shared Sub ImportHistoricoARV(ByVal fonte As Connection, ByVal locationid As Int16)
@@ -322,7 +272,7 @@ Public Class FridaUtils
         Dim encounter_id As Integer
 
         Dim saida As Integer
-        
+
 
         Try
 
@@ -453,10 +403,10 @@ Public Class FridaUtils
                                     End If
 
                                 End If
-                                End If
-
                             End If
-                            rs.MoveNext()
+
+                        End If
+                        rs.MoveNext()
                     End While
                     '.Connection.close()
                     '.Connection.Dispose()
@@ -515,6 +465,6 @@ Public Class FridaUtils
         cmmSaida.CommandType = CommandType.Text
         cmmSaida.CommandText = strString
         Return cmmSaida.ExecuteScalar
-        
+
     End Function
 End Class

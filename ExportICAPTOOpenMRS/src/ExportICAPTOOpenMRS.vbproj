@@ -136,7 +136,9 @@
       <DependentUpon>frmMain.vb</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FRIDA\FridaUtils.vb" />
+    <Compile Include="FRIDA\FILAUtils.vb" />
+    <Compile Include="Gaac\GAAC.vb" />
+    <Compile Include="Gaac\GaacUtils.vb" />
     <Compile Include="Import Patient\PatientUtils.vb" />
     <Compile Include="LABORATORIO\LabUtils.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
@@ -199,6 +201,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="BOOK01B.ICO" />
+    <Content Include="files\SQLAccessQueries.txt" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">

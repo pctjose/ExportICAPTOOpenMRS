@@ -1,0 +1,24 @@
+﻿apsspp:
+SELECT t_paciente.nid, t_seguimento.dataseguimento, t_seguimento.pp1, t_seguimento.pp2, t_seguimento.pp3, t_seguimento.pp4, t_seguimento.pp5, t_seguimento.pp6, t_seguimento.pp7, t_seguimento.apssTipovisita, t_seguimento.apssAdesao, t_seguimento.apssActividade, t_seguimento.apssproximavisita, t_seguimento.apssdatavisita, t_adulto.recebeSms, t_adulto.aceitaSerContatado
+FROM (t_paciente INNER JOIN t_seguimento ON t_paciente.nid = t_seguimento.nid) LEFT JOIN t_adulto ON t_seguimento.nid = t_adulto.nid
+WHERE (((t_seguimento.pp1)=True)) OR (((t_seguimento.pp2)=True)) OR (((t_seguimento.pp3)=True)) OR (((t_seguimento.pp4)=True)) OR (((t_seguimento.pp5)=True)) OR (((t_seguimento.pp6)=True)) OR (((t_seguimento.pp7)=True));
+
+apsspp_initial:
+SELECT t_paciente.nid, t_paciente.dataabertura, t_adulto.recebeSms, t_adulto.aceitaSerContatado
+FROM t_paciente INNER JOIN t_adulto ON t_paciente.nid=t_adulto.nid
+WHERE (recebeSms=true or aceitaSerContatado=true) and t_paciente.nid not in (select distinct nid from apsspp);
+
+iniciotarv_sem_dataseguimento:
+SELECT nid, dataabertura, datainiciotarv
+FROM t_paciente
+WHERE datainiciotarv is not null and nid not in (select nid from Seguimento_inicio_tarv);
+
+Q_seguimento:
+SELECT t_seguimento.*, Seguimento_inicio_tarv.datainiciotarv, t_paciente.tipopaciente
+FROM (t_seguimento LEFT JOIN Seguimento_inicio_tarv ON (t_seguimento.dataseguimento = Seguimento_inicio_tarv.dataseguimento) AND (t_seguimento.nid = Seguimento_inicio_tarv.nid)) INNER JOIN t_paciente ON t_seguimento.nid = t_paciente.nid;
+
+Seguimento_inicio_tarv:
+SELECT t_paciente.nid, max(t_seguimento.dataseguimento) AS dataseguimento, max(t_paciente.datainiciotarv) AS datainiciotarv
+FROM t_paciente INNER JOIN t_seguimento ON t_paciente.nid = t_seguimento.nid
+WHERE t_seguimento.dataseguimento<=t_paciente.datainiciotarv
+GROUP BY t_paciente.nid;

@@ -9,15 +9,13 @@ Public Class ApssppUtil
         
         Dim obs As Obs
 
-        
-
         Dim dataArray As New ArrayList
 
 
         'Try
         Dim cmmFonte As New Command 'Acess
         Dim rs As New Recordset
-        Dim cmmDestino As New MySqlCommand 'MySQL
+
 
         cmmFonte.CommandType = CommandTypeEnum.adCmdText
         cmmFonte.ActiveConnection = fonte
@@ -31,8 +29,7 @@ Public Class ApssppUtil
                                 " FROM apsspp where nid is not null and nid in (" & whereQuery & ")"
         End If
 
-        cmmDestino.CommandType = CommandType.Text
-        cmmDestino.Connection = ConexaoOpenMRS3
+        
 
         rs = cmmFonte.Execute
 
@@ -323,7 +320,7 @@ Public Class ApssppUtil
         'Try
         Dim cmmFonte As New Command 'Acess
         Dim rs As New Recordset
-        Dim cmmDestino As New MySqlCommand 'MySQL
+
 
         cmmFonte.CommandType = CommandTypeEnum.adCmdText
         cmmFonte.ActiveConnection = fonte
@@ -337,8 +334,7 @@ Public Class ApssppUtil
                                 " FROM apsspp_initial where nid is not null and nid in (" & whereQuery & ")"
         End If
 
-        cmmDestino.CommandType = CommandType.Text
-        cmmDestino.Connection = ConexaoOpenMRS3
+        
 
         rs = cmmFonte.Execute
 

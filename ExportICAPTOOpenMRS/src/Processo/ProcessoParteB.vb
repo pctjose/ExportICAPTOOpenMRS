@@ -39,8 +39,8 @@ Public Class ProcessoParteB
         cmmFonte.CommandType = CommandTypeEnum.adCmdText
         cmmFonte.CommandText = "SELECT t_observacaopaciente.codobservacao, t_observacaopaciente.codestado, " & _
                                 "t_observacaopaciente.data, t_observacaopaciente.valor,t_observacaodata.medico,t_observacaopaciente.observacao " & _
-                                "FROM t_observacaopaciente,t_observacaodata  " & _
-                                " where t_observacaodata.nid=t_observacaopaciente.nid and " & _
+                                "FROM t_observacaopaciente,t_observacaodata,t_paciente  " & _
+                                " where t_paciente.nid=t_observacaodata.nid and t_observacaodata.nid=t_observacaopaciente.nid and " & _
                                 "      t_observacaodata.data=t_observacaopaciente.data and t_observacaopaciente.nid='" & nid & "'"
         rs = cmmFonte.Execute
 
@@ -427,7 +427,7 @@ Public Class ProcessoParteB
                             obs.data_Type = ObsDataType.TNumeric
                             observacoes.Add(obs)
                         End If
-                    Case "Tensão Arterial", "Tensao Arterial"
+                    Case "Tensão Arterial", "Tensao Arterial", "Tensão-Arterial"
                         If Not String.IsNullOrEmpty(valorObs) Then
                             valorObs = valorObs.Replace(",", ".")
                             If valorObs.Contains("/") And (Not valorObs.StartsWith("/")) And (Not valorObs.EndsWith("/")) Then
@@ -436,6 +436,26 @@ Public Class ProcessoParteB
 
                                 inferior = valorObs.Substring(0, valorObs.IndexOf("/"))
                                 superior = valorObs.Substring(valorObs.IndexOf("/") + 1)
+                                Dim tempObsInferior As New Obs
+                                Dim tempObsSuperior As New Obs
+
+                                tempObsInferior.concept_id = 5085
+                                tempObsInferior.value_numeric = inferior
+                                tempObsInferior.obs_datetime = dataObs
+                                tempObsInferior.data_Type = ObsDataType.TNumeric
+                                sinaisVitais.Add(tempObsInferior)
+
+                                tempObsSuperior.concept_id = 5086
+                                tempObsSuperior.value_numeric = inferior
+                                tempObsSuperior.obs_datetime = dataObs
+                                tempObsSuperior.data_Type = ObsDataType.TNumeric
+                                sinaisVitais.Add(tempObsSuperior)
+                            ElseIf valorObs.Contains(",") And (Not valorObs.StartsWith(",")) And (Not valorObs.EndsWith(",")) Then
+                                Dim inferior As Int16
+                                Dim superior As Int16
+
+                                inferior = valorObs.Substring(0, valorObs.IndexOf(","))
+                                superior = valorObs.Substring(valorObs.IndexOf(",") + 1)
                                 Dim tempObsInferior As New Obs
                                 Dim tempObsSuperior As New Obs
 
@@ -585,11 +605,20 @@ Public Class ProcessoParteB
                             If valorObs.Contains("%") Then
                                 valorObs = valorObs.Remove(valorObs.IndexOf("%"))
                             End If
-                            obs.concept_id = 1342
-                            obs.value_numeric = valorObs
-                            obs.obs_datetime = dataObs
-                            obs.data_Type = ObsDataType.TNumeric
-                            sinaisVitais.Add(obs)
+                            valorObs = valorObs.Replace(",", ".")
+                            Try
+                                Dim valor As Double = CDbl(valorObs)
+                                If valor < 100 Then
+                                    obs.concept_id = 1342
+                                    obs.value_numeric = valorObs
+                                    obs.obs_datetime = dataObs
+                                    obs.data_Type = ObsDataType.TNumeric
+                                    sinaisVitais.Add(obs)
+                                End If
+                            Catch ex As Exception
+
+                            End Try
+                            
                         End If
 
                 End Select
@@ -610,14 +639,15 @@ Public Class ProcessoParteB
                 Else
                     provider = 27
                 End If
-                cmmDestino.CommandText = "Insert into encounter(encounter_type,patient_id,provider_id,location_id," & _
-                                                "form_id,encounter_datetime,creator,date_created,voided,uuid) values(1," & patientID & "," & provider & "," & locationid & "," & _
-                                                "100,'" & dataMySQL(dataAbertura) & "',22,now(),0,uuid())"
-                cmmDestino.ExecuteNonQuery()
+                'cmmDestino.CommandText = "Insert into encounter(encounter_type,patient_id,provider_id,location_id," & _
+                '                                "form_id,encounter_datetime,creator,date_created,voided,uuid) values(1," & patientID & "," & provider & "," & locationid & "," & _
+                '                                "100,'" & dataMySQL(dataAbertura) & "',22,now(),0,uuid())"
+                'cmmDestino.ExecuteNonQuery()
 
-                cmmDestino.CommandText = "Select max(encounter_id) from encounter"
-                encounterID = cmmDestino.ExecuteScalar
+                'cmmDestino.CommandText = "Select max(encounter_id) from encounter"
+                'encounterID = cmmDestino.ExecuteScalar
 
+                encounterID = EncounterDAO.insertEncounterByParam(1, patientID, locationid, 100, dataAbertura, 12, provider)
 
                 obsSet = New Obs
 
@@ -779,8 +809,8 @@ Public Class ProcessoParteB
         cmmFonte.CommandType = CommandTypeEnum.adCmdText
         cmmFonte.CommandText = "SELECT t_observacaopaciente.codobservacao, t_observacaopaciente.codestado, " & _
                                 "t_observacaopaciente.data, t_observacaopaciente.valor,t_observacaodata.medico,t_observacaopaciente.observacao " & _
-                                "FROM t_observacaopaciente,t_observacaodata  " & _
-                                " where t_observacaodata.nid=t_observacaopaciente.nid and " & _
+                                "FROM t_observacaopaciente,t_observacaodata,t_paciente  " & _
+                                " where t_paciente.nid=t_observacaodata.nid and t_observacaodata.nid=t_observacaopaciente.nid and " & _
                                 "      t_observacaodata.data=t_observacaopaciente.data and t_observacaopaciente.nid='" & nid & "'"
         rs = cmmFonte.Execute
 
@@ -1150,14 +1180,15 @@ Public Class ProcessoParteB
                 Else
                     provider = 27
                 End If
-                cmmDestino.CommandText = "Insert into encounter(encounter_type,patient_id,provider_id,location_id," & _
-                                                "form_id,encounter_datetime,creator,date_created,uuid) values(3," & patientID & "," & provider & "," & locationid & "," & _
-                                                "109,'" & dataMySQL(dataAbertura) & "',22,now(),uuid())"
-                cmmDestino.ExecuteNonQuery()
+                'cmmDestino.CommandText = "Insert into encounter(encounter_type,patient_id,provider_id,location_id," & _
+                '                                "form_id,encounter_datetime,creator,date_created,uuid) values(3," & patientID & "," & provider & "," & locationid & "," & _
+                '                                "109,'" & dataMySQL(dataAbertura) & "',22,now(),uuid())"
+                'cmmDestino.ExecuteNonQuery()
 
-                cmmDestino.CommandText = "Select max(encounter_id) from encounter"
-                encounterID = cmmDestino.ExecuteScalar
+                'cmmDestino.CommandText = "Select max(encounter_id) from encounter"
+                'encounterID = cmmDestino.ExecuteScalar
 
+                encounterID = EncounterDAO.insertEncounterByParam(3, patientID, locationid, 109, dataAbertura, 12, provider)
 
                 obsSet = New Obs
 

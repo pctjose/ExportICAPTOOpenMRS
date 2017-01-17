@@ -206,15 +206,14 @@ Public Class PatientUtils
                         End If
                         rs.MoveNext()
                     End While
-                    '.Connection.close()
-                    '.Connection.Dispose()
+                    
                     rs.Close()
                 End If
             End With
         Catch ex As Exception
-            'MsgBox(nid)
+
             MsgBox("Error Importing Patients: " & ex.Message)
-            'Nerros += 1
+
         End Try
     End Sub
     

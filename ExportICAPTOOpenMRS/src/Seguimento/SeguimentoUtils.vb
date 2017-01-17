@@ -8,10 +8,11 @@ Public Class SeguimentoUtils
         Dim rs As New Recordset
         cmmFonte.ActiveConnection = fonte
         cmmFonte.CommandType = CommandTypeEnum.adCmdText
-        cmmFonte.CommandText = "Select codtratamento,data from t_tratamentoseguimento where idseguimento=" & IdSeguimento & ""
+        cmmFonte.CommandText = "Select codtratamento,data,datafimtratamento from t_tratamentoseguimento where idseguimento=" & IdSeguimento & ""
         rs = cmmFonte.Execute
         Dim codTratamento As String
         Dim dataTratamento As Date
+        Dim fimTratamento As Date
         Dim obs As New Obs
 
         If Not (rs.EOF And rs.BOF) Then
@@ -20,6 +21,10 @@ Public Class SeguimentoUtils
                 codTratamento = PatientUtils.verificaNulo(rs, "codtratamento")
                 If Not IsDBNull(rs.Fields.Item("data").Value) Then
                     dataTratamento = rs.Fields.Item("data").Value
+                End If
+
+                If Not IsDBNull(rs.Fields.Item("datafimtratamento").Value) Then
+                    fimTratamento = rs.Fields.Item("datafimtratamento").Value
                 End If
                 'codTratamento = codTratamento.ToUpper
 
@@ -66,6 +71,10 @@ Public Class SeguimentoUtils
                         obs.value_coded = 450
                         obs.obs_datetime = dataTratamento
                         seguimentos.Add(obs)
+                    Case "Plumpy Nut", "Plumpy´Nut", "ATPU"
+                        obs.value_coded = 1884
+                        obs.obs_datetime = dataTratamento
+                        seguimentos.Add(obs)
                     Case "Ampicilina"
                         obs.value_coded = 269
                         obs.obs_datetime = dataTratamento
@@ -105,7 +114,9 @@ Public Class SeguimentoUtils
                     Case "CAF"
                         'Falta Implementar isto
                     Case "Canamicina", "Kanamicina"
-                        'Falta Implementar isto
+                        obs.value_coded = 356
+                        obs.obs_datetime = dataTratamento
+                        seguimentos.Add(obs)
 
                     Case "Carbamezapina", "Carpamezapina"
                         obs.value_coded = 920
@@ -115,6 +126,20 @@ Public Class SeguimentoUtils
 
                     Case "Ceftroaxona", "Ceftriaxona"
                         obs.value_coded = 496
+                        obs.obs_datetime = dataTratamento
+                        seguimentos.Add(obs)
+                    Case "CSB"
+                        obs.value_coded = 2151
+                        obs.obs_datetime = dataTratamento
+                        seguimentos.Add(obs)
+
+                    Case "Nevirapina (NVP)", "Nevirapina", "NVP"
+                        obs.value_coded = 631
+                        obs.obs_datetime = dataTratamento
+                        seguimentos.Add(obs)
+
+                    Case "Zidovudina (AZT)", "Zidovudina", "AZT"
+                        obs.value_coded = 797
                         obs.obs_datetime = dataTratamento
                         seguimentos.Add(obs)
 
@@ -129,7 +154,7 @@ Public Class SeguimentoUtils
                         obs.value_coded = 266
                         obs.obs_datetime = dataTratamento
                         seguimentos.Add(obs)
-                    Case "Clorfeneramina", "Clorofelinamina", "Clorofinamina", "Clorofenamina"
+                    Case "Clorfeneramina", "Clorofelinamina", "Clorofinamina", "Clorofenamina", "clorfenamina", "Clorifeminamina"
                         obs.value_coded = 913
                         obs.obs_datetime = dataTratamento
                         seguimentos.Add(obs)
@@ -157,7 +182,7 @@ Public Class SeguimentoUtils
                         obs.value_coded = 247
                         obs.obs_datetime = dataTratamento
                         seguimentos.Add(obs)
-                    Case "Diclofinac", "Diclofenac"
+                    Case "Diclofinac", "Diclofenac", "Diclofenaco"
                         obs.value_coded = 436
                         obs.obs_datetime = dataTratamento
                         seguimentos.Add(obs)
@@ -165,7 +190,7 @@ Public Class SeguimentoUtils
                         obs.value_coded = 921
                         obs.obs_datetime = dataTratamento
                         seguimentos.Add(obs)
-                    Case "Doxaciclina", "Doxicilina"
+                    Case "Doxaciclina", "Doxicilina", "Doxacilina"
                         obs.value_coded = 95
                         obs.obs_datetime = dataTratamento
                         seguimentos.Add(obs)
@@ -264,7 +289,7 @@ Public Class SeguimentoUtils
                         seguimentos.Add(obs)
                     Case "Mistura Oral"
                         'Falta Implementar isto
-                    Case "Multivitamina", "Multivitaminas Xarope", "Multivitamina Xarope"
+                    Case "Multivitamina", "Multivitaminas Xarope", "Multivitamina Xarope", "Multivitaminas"
                         obs.value_coded = 461
                         obs.obs_datetime = dataTratamento
                         seguimentos.Add(obs)
@@ -302,7 +327,7 @@ Public Class SeguimentoUtils
                         obs.value_coded = 5829
                         obs.obs_datetime = dataTratamento
                         seguimentos.Add(obs)
-                    Case "predisolona", "Predizilona"
+                    Case "predisolona", "Predizilona", "prednisolona"
                         obs.value_coded = 765
                         obs.obs_datetime = dataTratamento
                         seguimentos.Add(obs)
@@ -327,7 +352,7 @@ Public Class SeguimentoUtils
                         obs.value_coded = 767
                         obs.obs_datetime = dataTratamento
                         seguimentos.Add(obs)
-                    Case "Sal ferroso", "Sal feroso"
+                    Case "Sal ferroso", "Sal feroso", "Sal Ferroso/Ác Fólico"
                         obs.value_coded = 256
                         obs.obs_datetime = dataTratamento
                         seguimentos.Add(obs)
@@ -338,7 +363,9 @@ Public Class SeguimentoUtils
                     Case "SFAF"
                         'Falta Implementar isto
                     Case "Sherz"
-                        'Falta Implementar isto
+                        obs.value_coded = 2057
+                        obs.obs_datetime = dataTratamento
+                        seguimentos.Add(obs)
                     Case "SRO", "S.O.R.O", "SORO"
                         obs.value_coded = 5244
                         obs.obs_datetime = dataTratamento
@@ -1052,7 +1079,7 @@ Public Class SeguimentoUtils
                                 " where t_diagnosticoseguimento.idseguimento=" & IdSeguimento & ""
         rs = cmmFonte.Execute
         Dim codDiag As String
-        Dim obsDiag As String
+
         Dim dataDiag As Date
         Dim obs As New Obs
 
@@ -1060,36 +1087,180 @@ Public Class SeguimentoUtils
             rs.MoveFirst()
             While Not rs.EOF
                 codDiag = PatientUtils.verificaNulo(rs, "coddiagnostico")
-                obsDiag = PatientUtils.verificaNulo(rs, "observacao")
+                If Not String.IsNullOrEmpty(codDiag) Then
+                    obs.data_Type = ObsDataType.TCoded
+                    obs.concept_id = 1406
 
-                If Not IsDBNull(rs.Fields.Item("data").Value) Then
-                    dataDiag = rs.Fields.Item("data").Value
-                End If
-                If Not String.IsNullOrEmpty(obsDiag) Then
-                    codDiag &= " (" & obsDiag & ")"
-                End If
-                obs.concept_id = 1649
-                obs.value_text = codDiag
-                obs.obs_datetime = dataDiag
-                diagnosticos.Add(obs)
+                    Select Case codDiag
+                        Case "ADPM"
+                            obs.value_coded = 8607
+                        Case "ANEMIA"
+                            obs.value_coded = 3
+                        Case "CANDIDÍASE ORAL"
+                            obs.value_coded = 5334
+                        Case "DERMATITE ATOPICA"
+                            obs.value_coded = 11385
+                        Case "DERMATITE SEBORREICA"
+                            obs.value_coded = 11389
+                        Case "DESNUTRIÇÃO AGUDA GRAVE (DAG)"
+                            obs.value_coded = 1844
+                        Case "DESNUTRIÇÃO AGUDA MODERADA (DAM)"
+                            obs.value_coded = 68
+                        Case "Diarreia"
+                            obs.value_coded = 16
+                        Case "ENCEFALOPATIA POR HIV"
+                            obs.value_coded = 6990
+                        Case "ESTOMATITE HERPETICA"
+                            obs.value_coded = 10939
+                        Case "EXTRAPULMONAR", "TB - EXTRAPULMONAR"
+                            obs.value_coded = 5042
+                        Case "FALENCIA DE CRESCIMENTO"
+                            obs.value_coded = 5050
+                        Case "FILHO DE MAE HIV+"
+                            obs.value_coded = 1586
+                        Case "GEA"
+                            obs.value_coded = 197
+                        Case "GIARDIASE"
+                            obs.value_coded = 6496
+                        Case "HERPES ZOSTER"
+                            obs.value_coded = 836
+                        Case "HIV/SIDA"
+                            obs.value_coded = 894
+                        Case "IVRS"
+                            obs.value_coded = 10588
+                        Case "KW"
+                            obs.value_coded = 8600
+                        Case "KW-MARASMATICO"
+                            obs.value_coded = 8602
+                        Case "LIP"
+                            obs.value_coded = 10942
+                        Case "Malaria"
+                            obs.value_coded = 123
+                        Case "MARASMO"
+                            obs.value_coded = 8601
+                        Case "OTITE"
+                            obs.value_coded = 218
+                        Case "PAROTIDITE CRONICA"
+                            obs.value_coded = 1540
+                        Case "PCP"
+                            obs.value_coded = 7187
+                        Case "PIODERMITE"
+                            obs.value_coded = 11354
+                        Case "PNEUMONIA (BPN/PN)"
+                            obs.value_coded = 43
+                        Case "PRURIGO"
+                            obs.value_coded = 879
+                        Case "SARCOMA KAPOSI (SK)"
+                            obs.value_coded = 507
+                        Case "SINDROMES NEUROLÓGICOS"
+                            obs.value_coded = 8398
+                        Case "TB", "TB DISSEMINADA"
+                            obs.value_coded = 5042
+                        Case "TB PULMONAR BK NEG", "TB PULMONAR BK POS"
+                            obs.value_coded = 42
+                        Case "TINEA CAPITIS"
+                            obs.value_coded = 7047
+                        Case Else
+                            obs.concept_id = 1649
+                            obs.data_Type = ObsDataType.TText
+                            obs.value_text = codDiag
+                    End Select
 
-                obs = New Obs
+                    If Not IsDBNull(rs.Fields.Item("data").Value) Then
+                        dataDiag = rs.Fields.Item("data").Value
+                    End If
+
+                    obs.obs_datetime = dataDiag
+
+                    diagnosticos.Add(obs)
+
+                    obs = New Obs
+                End If
                 rs.MoveNext()
             End While
         End If
         Return diagnosticos
     End Function
 
+
+    Public Shared Function ImportTuberculoseTratamento(ByVal fonte As Connection, ByVal IdSeguimento As Integer) As ArrayList
+        
+        Try
+
+            Dim cmmFonte As New Command 'Acess
+
+            Dim rs As New Recordset
+            Dim dataInicial As Date
+            Dim dataCorrente As Date
+            Dim notSet As New ArrayList
+            Dim obs As Obs
+
+
+            rs.Open("Select distinct data,datafim from t_tratamentotb where idseguimento = " & IdSeguimento, fonte, CursorTypeEnum.adOpenDynamic, LockTypeEnum.adLockReadOnly)
+
+
+
+            If Not (rs.EOF And rs.BOF) Then
+                
+                rs.MoveFirst()
+
+                While Not rs.EOF
+
+                    If Not IsDBNull(rs.Fields.Item("data").Value) Then
+
+                        dataInicial = rs.Fields.Item("data").Value
+
+                        obs = New Obs
+                        obs.concept_id = 1113
+                        obs.data_Type = ObsDataType.TDatetime
+                        obs.value_datetime = dataInicial
+                        obs.obs_datetime = dataInicial
+                        notSet.Add(obs)
+
+                        If Not IsDBNull(rs.Fields.Item("datafim").Value) Then
+
+                            dataCorrente = rs.Fields.Item("datafim").Value
+
+                            obs = New Obs
+
+                            obs.concept_id = 6120
+                            obs.data_Type = ObsDataType.TDatetime
+                            obs.obs_datetime = dataCorrente
+                            obs.value_datetime = dataCorrente
+
+                            notSet.Add(obs)
+
+                        End If
+
+                    End If
+
+                    rs.MoveNext()
+                End While
+                rs.Close()
+            End If
+            Return notSet
+
+        Catch ex As Exception
+            MsgBox("Error Importing Treatment of Tuberculosis: " & ex.Message)
+            Return New ArrayList
+        End Try
+    End Function
+
+
+
+
+
     Public Shared Sub importSeguimento(ByVal fonte As Connection, ByVal locationid As Int16)
         Dim patientID As Integer
         Dim encounter_id As Integer
         Dim nid As String
+
         Dim dataSeguimento As Date
-        Dim idSeguimento As Integer
+        Dim idSeguimento, encounterID As Integer
         Dim estadioOms As String
         Dim dataProxima As Date
         Dim gravidaz As String
-        Dim tipoPaciente As String
+        Dim tipoPaciente, tiposeguimento As String
         Dim obs As New Obs
 
         Dim tratamentos As New ArrayList
@@ -1107,16 +1278,29 @@ Public Class SeguimentoUtils
         cmmFonte.CommandType = CommandTypeEnum.adCmdText
         cmmFonte.ActiveConnection = fonte
         If AllPatients Then
-            cmmFonte.CommandText = "SELECT  t_seguimento.idseguimento, t_seguimento.nid, t_seguimento.dataseguimento, t_seguimento.estadiooms," & _
-                                            "t_seguimento.dataproximaconsulta, t_seguimento.Gravidez, t_paciente.tipopaciente, " & _
-                                            "t_seguimento.tarvregime,t_seguimento.interrompermotivo,t_seguimento.screeningtb,t_seguimento.aderente " & _
-                                " FROM t_paciente INNER JOIN t_seguimento ON t_paciente.nid = t_seguimento.nid "
+            cmmFonte.CommandText = "SELECT  Q_seguimento.idseguimento, Q_seguimento.nid, Q_seguimento.dataseguimento, Q_seguimento.estadiooms," & _
+                                            "Q_seguimento.dataproximaconsulta,Q_seguimento.aleitamentomaterno,Q_seguimento.idadedesmame,Q_seguimento.aderente, " & _
+                                            "Q_seguimento.tarvregime,Q_seguimento.interrompermotivo,Q_seguimento.Gravidez,Q_seguimento.screeningtb,Q_seguimento.screeningIts, " & _
+                                            "Q_seguimento.aconselhado,Q_seguimento.referidoSectorClinico,Q_seguimento.gravida,Q_seguimento.dum,Q_seguimento.dpp,Q_seguimento.PTV_TARV, " & _
+                                            "Q_seguimento.sintomasTb,Q_seguimento.dataParto,Q_seguimento.lactante,Q_seguimento.temperatura,Q_seguimento.tensaoInferior,Q_seguimento.tensaosuperior,Q_seguimento.tipopaciente, " & _
+                                            "Q_seguimento.peso,Q_seguimento.altura,Q_seguimento.perimetroBraquial,Q_seguimento.imc,Q_seguimento.imcPorIdade,Q_seguimento.pesoPorEstatura,Q_seguimento.diagnosticoNutricional, " & _
+                                            "Q_seguimento.tratamentoNutricional,Q_seguimento.densPsicoMotor,Q_seguimento.investigacaoTb,Q_seguimento.genexpert,Q_seguimento.datainiciotarv,Q_seguimento.tiposeguimento, " & _
+                                            "Q_seguimento.tipotarv,Q_seguimento.motivo,Q_seguimento.codregime,Q_seguimento.motivoInicioTarv " & _
+                                " FROM Q_seguimento order by Q_seguimento.nid "
         Else
-            cmmFonte.CommandText = "SELECT t_seguimento.idseguimento, t_seguimento.nid, t_seguimento.dataseguimento, t_seguimento.estadiooms, " & _
-                                    "t_seguimento.dataproximaconsulta, t_seguimento.Gravidez, t_paciente.tipopaciente, " & _
-                                    "t_seguimento.tarvregime,t_seguimento.interrompermotivo,t_seguimento.screeningtb,t_seguimento.aderente " & _
-                                " FROM t_paciente INNER JOIN t_seguimento ON t_paciente.nid = t_seguimento.nid where t_paciente.nid in (" & whereQuery & ")"
 
+            cmmFonte.CommandText = "SELECT  Q_seguimento.idseguimento, Q_seguimento.nid, Q_seguimento.dataseguimento, Q_seguimento.estadiooms," & _
+                                            "Q_seguimento.dataproximaconsulta,Q_seguimento.aleitamentomaterno,Q_seguimento.idadedesmame,Q_seguimento.aderente, " & _
+                                            "Q_seguimento.tarvregime,Q_seguimento.interrompermotivo,Q_seguimento.Gravidez,Q_seguimento.screeningtb,Q_seguimento.screeningIts, " & _
+                                            "Q_seguimento.aconselhado,Q_seguimento.referidoSectorClinico,Q_seguimento.gravida,Q_seguimento.dum,Q_seguimento.dpp,Q_seguimento.PTV_TARV, " & _
+                                            "Q_seguimento.sintomasTb,Q_seguimento.dataParto,Q_seguimento.lactante,Q_seguimento.temperatura,Q_seguimento.tensaoInferior,Q_seguimento.tensaosuperior,Q_seguimento.tipopaciente, " & _
+                                            "Q_seguimento.peso,Q_seguimento.altura,Q_seguimento.perimetroBraquial,Q_seguimento.imc,Q_seguimento.imcPorIdade,Q_seguimento.pesoPorEstatura,Q_seguimento.diagnosticoNutricional, " & _
+                                            "Q_seguimento.tratamentoNutricional,Q_seguimento.densPsicoMotor,Q_seguimento.investigacaoTb,Q_seguimento.genexpert,Q_seguimento.datainiciotarv,Q_seguimento.tiposeguimento, " & _
+                                            "Q_seguimento.tipotarv,Q_seguimento.motivo,Q_seguimento.codregime,Q_seguimento.motivoInicioTarv " & _
+                                " FROM Q_seguimento where nid in (" & whereQuery & ") order by Q_seguimento.nid "
+
+
+           
         End If
 
         cmmDestino.CommandType = CommandType.Text
@@ -1126,47 +1310,54 @@ Public Class SeguimentoUtils
 
         If Not (rs.EOF And rs.BOF) Then
             rs.MoveFirst()
+            
             While Not rs.EOF
-
                 nid = rs.Fields.Item("nid").Value
-                dataSeguimento = rs.Fields.Item("dataseguimento").Value
-                idSeguimento = rs.Fields.Item("idseguimento").Value
-                estadioOms = PatientUtils.verificaNulo(rs, "estadiooms")
-                gravidaz = PatientUtils.verificaNulo(rs, "Gravidez")
-                If Not IsDBNull(rs.Fields.Item("dataproximaconsulta").Value) Then
-                    dataProxima = rs.Fields.Item("dataproximaconsulta").Value
-                    insertNextEncounter = True
-                Else
-                    dataProxima = Nothing
-                    insertNextEncounter = False
-                End If
-                If Not IsDBNull(rs.Fields.Item("tipopaciente").Value) Then
-                    tipoPaciente = rs.Fields.Item("tipopaciente").Value
-                Else
-                    tipoPaciente = "adulto"
-                End If
-                'Get Type of Patient for define Pediatric or Adult Seguimento
-
                 patientID = GetPatientOpenMRSIDByNID(nid) 'Get the openmrs patient_id using the NID
 
                 If patientID > 0 Then
 
-                    'End If
+                    dataSeguimento = rs.Fields.Item("dataseguimento").Value
+                    idSeguimento = rs.Fields.Item("idseguimento").Value
+                    estadioOms = PatientUtils.verificaNulo(rs, "estadiooms")
+                    gravidaz = PatientUtils.verificaNulo(rs, "Gravidez")
 
-                    If tipoPaciente = "Adulto" Or tipoPaciente = "adulto" Then
-                        cmmDestino.CommandText = "Insert into encounter(encounter_type,patient_id,provider_id,location_id," & _
-                                            "form_id,encounter_datetime,creator,date_created,voided,uuid) values(6," & patientID & ",27," & locationid & "," & _
-                                            "101,'" & dataMySQL(dataSeguimento) & "',22,now(),0,uuid())"
-                        cmmDestino.ExecuteNonQuery()
-                    ElseIf tipoPaciente = "Crianca" Or tipoPaciente = "Criança" Then
-                        cmmDestino.CommandText = "Insert into encounter(encounter_type,patient_id,provider_id,location_id," & _
-                                            "form_id,encounter_datetime,creator,date_created,voided,uuid) values(9," & patientID & ",27," & locationid & "," & _
-                                            "110,'" & dataMySQL(dataSeguimento) & "',22,now(),0,uuid())"
-                        cmmDestino.ExecuteNonQuery()
+                    If Not IsDBNull(rs.Fields.Item("dataproximaconsulta").Value) Then
+                        dataProxima = rs.Fields.Item("dataproximaconsulta").Value
+                        insertNextEncounter = True
+                    Else
+                        dataProxima = Nothing
+                        insertNextEncounter = False
                     End If
 
-                    cmmDestino.CommandText = "Select max(encounter_id) from encounter"
-                    encounter_id = cmmDestino.ExecuteScalar
+                    If Not IsDBNull(rs.Fields.Item("tipopaciente").Value) Then
+                        tipoPaciente = rs.Fields.Item("tipopaciente").Value
+                    Else
+                        tipoPaciente = "Adulto"
+                    End If
+
+                    If Not IsDBNull(rs.Fields.Item("tiposeguimento").Value) Then
+                        tiposeguimento = rs.Fields.Item("tiposeguimento").Value
+                    Else
+                        tiposeguimento = "Seguinte"
+                    End If
+
+                    If tipoPaciente = "Adulto" Or tipoPaciente = "adulto" Then
+
+                        If tiposeguimento = "Seguinte" Then
+                            encounterID = EncounterDAO.insertEncounterByParam(6, patientID, locationid, 126, dataSeguimento, 3, 27)
+                        Else
+                            encounterID = EncounterDAO.insertEncounterByParam(6, patientID, locationid, 126, dataSeguimento, 5, 27)
+                        End If
+
+                    ElseIf tipoPaciente = "Crianca" Or tipoPaciente = "Criança" Then
+                        If tiposeguimento = "Seguinte" Then
+                            encounterID = EncounterDAO.insertEncounterByParam(9, patientID, locationid, 127, dataSeguimento, 3, 27)
+                        Else
+                            encounterID = EncounterDAO.insertEncounterByParam(9, patientID, locationid, 127, dataSeguimento, 5, 27)
+                        End If
+
+                    End If
 
                     obs.date_created = Now.Date
                     obs.encounter_id = encounter_id
@@ -1176,7 +1367,7 @@ Public Class SeguimentoUtils
                     obs.voided = False
 
                     If Not String.IsNullOrEmpty(estadioOms) Then
-                        'If tipoPaciente = "Adulto" Or tipoPaciente = "adulto" Then
+
                         obs.concept_id = 5356
                         obs.data_Type = ObsDataType.TCoded
                         If estadioOms = "I" Then
@@ -1189,21 +1380,7 @@ Public Class SeguimentoUtils
                             obs.value_coded = 1207
                         End If
                         ObsDAO.insertObs(obs, False)
-                        'Else
-                        '    obs.concept_id = 1559
-                        '    obs.data_Type = ObsDataType.TCoded
-                        '    If estadioOms = "I" Then
-                        '        obs.value_coded = 1558
-                        '        ObsDAO.insertObs(obs, False)
-                        '    ElseIf estadioOms = "II" Then
-                        '        obs.value_coded = 1561
-                        '        ObsDAO.insertObs(obs, False)
-                        '    ElseIf estadioOms = "III" Then
-                        '        obs.value_coded = 1562
-                        '        ObsDAO.insertObs(obs, False)
-                        '    End If
 
-                        'End If
                     End If
                     If Not String.IsNullOrEmpty(gravidaz) Then
                         obs.value_numeric = gravidaz
@@ -1218,6 +1395,400 @@ Public Class SeguimentoUtils
                         ObsDAO.insertObs(obs, False)
                     End If
 
+                    If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "gravida")) Then
+                        If rs.Fields.Item("gravida").Value = "-1" Then
+                            obs.value_coded = 44
+                            obs.data_Type = ObsDataType.TCoded
+                            obs.concept_id = 1982
+                            ObsDAO.insertObs(obs, False)
+                        End If
+                    End If
+                    If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "aderente")) Then
+                        If rs.Fields.Item("aderente").Value = "-1" Then
+                            obs.value_coded = 1065
+                            obs.data_Type = ObsDataType.TCoded
+                            obs.concept_id = 1714
+                            ObsDAO.insertObs(obs, False)
+                        ElseIf rs.Fields.Item("aderente").Value = "0" Then
+                            obs.value_coded = 1066
+                            obs.data_Type = ObsDataType.TCoded
+                            obs.concept_id = 1714
+                            ObsDAO.insertObs(obs, False)
+                        End If
+                    End If
+
+                    If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "tensaoInferior")) Then
+                        Dim tensaoInferior = rs.Fields.Item("tensaoInferior").Value
+                        If tensaoInferior >= 58 And tensaoInferior <= 140 Then
+                            obs.value_numeric = tensaoInferior
+                            obs.data_Type = ObsDataType.TNumeric
+                            obs.concept_id = 5086
+                            ObsDAO.insertObs(obs, False)
+                        End If
+                    End If
+
+                    If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "tensaosuperior")) Then
+                        Dim tensaosuperior = rs.Fields.Item("tensaosuperior").Value
+                        If tensaosuperior >= 100 And tensaosuperior <= 260 Then
+                            obs.value_numeric = tensaosuperior
+                            obs.data_Type = ObsDataType.TNumeric
+                            obs.concept_id = 5085
+                            ObsDAO.insertObs(obs, False)
+                        ElseIf tensaosuperior.ToString.Length = 5 Then
+                            Dim tSup As Integer = tensaosuperior.ToString.Substring(0, 3)
+                            Dim tInf As Integer = tensaosuperior.ToString.Substring(3, 2)
+
+                            obs.value_numeric = tInf
+                            obs.data_Type = ObsDataType.TNumeric
+                            obs.concept_id = 5086
+                            ObsDAO.insertObs(obs, False)
+
+                            obs.value_numeric = tSup
+                            obs.data_Type = ObsDataType.TNumeric
+                            obs.concept_id = 5085
+                            ObsDAO.insertObs(obs, False)
+                        ElseIf tensaosuperior.ToString.Length = 6 Then
+                            Dim tSup As Integer = tensaosuperior.ToString.Substring(0, 3)
+                            Dim tInf As Integer = tensaosuperior.ToString.Substring(3, 3)
+
+                            obs.value_numeric = tInf
+                            obs.data_Type = ObsDataType.TNumeric
+                            obs.concept_id = 5086
+                            ObsDAO.insertObs(obs, False)
+
+                            obs.value_numeric = tSup
+                            obs.data_Type = ObsDataType.TNumeric
+                            obs.concept_id = 5085
+                            ObsDAO.insertObs(obs, False)
+
+                        End If
+                    End If
+
+                    If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "temperatura")) Then
+                        Dim temperatura = rs.Fields.Item("temperatura").Value
+                        If temperatura >= 36 And temperatura <= 40 Then
+                            obs.value_numeric = temperatura
+                            obs.data_Type = ObsDataType.TNumeric
+                            obs.concept_id = 5088
+                            ObsDAO.insertObs(obs, False)
+                        End If
+                    End If
+
+                    If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "peso")) Then
+                        Dim peso = rs.Fields.Item("peso").Value
+                        If peso <= 250 Then
+                            obs.value_numeric = peso
+                            obs.data_Type = ObsDataType.TNumeric
+                            obs.concept_id = 5089
+                            ObsDAO.insertObs(obs, False)
+                        End If
+                    End If
+
+                    If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "altura")) Then
+                        Dim altura = rs.Fields.Item("altura").Value
+                        If altura < 20 Then
+                            If altura.ToString.Contains(".") Then
+                                altura = CInt(altura.ToString.Replace(".", ""))
+                            End If
+                        End If
+
+
+                        If altura >= 50 And altura <= 200 Then
+                            obs.value_numeric = altura
+                            obs.data_Type = ObsDataType.TNumeric
+                            obs.concept_id = 5090
+                            ObsDAO.insertObs(obs, False)
+                        End If
+                    End If
+
+                    If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "perimetroBraquial")) Then
+                        obs.value_numeric = rs.Fields.Item("perimetroBraquial").Value
+                        obs.data_Type = ObsDataType.TNumeric
+                        obs.concept_id = 1343
+                        ObsDAO.insertObs(obs, False)
+                    End If
+
+                    If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "imcPorIdade")) Then
+
+                        Dim imcPorIdade As String = rs.Fields.Item("imcPorIdade").Value
+                        Select Case imcPorIdade
+                            Case "<-3 D"
+                                obs.value_coded = 1844
+                            Case "≥ -1 DP"
+                                obs.value_coded = 1115
+                            Case "≥ –2 e < –1 DP"
+                                obs.value_coded = 6335
+                            Case Else
+                                obs.value_coded = 68
+                        End Select
+
+                        obs.data_Type = ObsDataType.TCoded
+                        obs.concept_id = 6336
+                        ObsDAO.insertObs(obs, False)
+                    End If
+
+                    If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "pesoPorEstatura")) Then
+                        Dim pesoPorEstatura As String = rs.Fields.Item("pesoPorEstatura").Value
+                        Select Case pesoPorEstatura
+                            Case "<-3 D"
+                                obs.value_coded = 1844
+                            Case "≥ -1 DP"
+                                obs.value_coded = 1115
+                            Case "≥ –2 e < –1 DP"
+                                obs.value_coded = 6335
+                            Case Else
+                                obs.value_coded = 68
+                        End Select
+
+                        obs.data_Type = ObsDataType.TCoded
+                        obs.concept_id = 6336
+                        ObsDAO.insertObs(obs, False)
+                    End If
+
+                    If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "diagnosticoNutricional")) Then
+                        Dim diagnosticoNutricional As String = rs.Fields.Item("diagnosticoNutricional").Value
+                        If diagnosticoNutricional.Length > 3 Then
+                            Select Case diagnosticoNutricional
+                                Case "<-3 D"
+                                    obs.value_coded = 1844
+                                Case "≥ -1 DP"
+                                    obs.value_coded = 1115
+                                Case "≥ –2 e < –1 DP"
+                                    obs.value_coded = 6335
+                                Case Else
+                                    obs.value_coded = 68
+                            End Select
+
+                            obs.data_Type = ObsDataType.TCoded
+                            obs.concept_id = 6336
+                            ObsDAO.insertObs(obs, False)
+                        End If
+                    End If
+
+                    If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "tratamentoNutricional")) Then
+                        Dim tratamentoNutricional As String = rs.Fields.Item("tratamentoNutricional").Value
+
+
+                        obs.data_Type = ObsDataType.TCoded
+                        obs.concept_id = 2152
+                        obs.value_coded = 1065
+                        ObsDAO.insertObs(obs, False)
+
+                        Select Case tratamentoNutricional
+                            Case "ATPU", "Plumpy Nut"
+                                obs.value_coded = 1884
+                            Case "CSB", "Cesta Basica"
+                                obs.value_coded = 2151
+                            Case "Papa Enriquecida", "Papa"
+                                obs.value_coded = 2150
+                            Case Else
+                                obs.value_coded = 5622
+                        End Select
+
+                        obs.data_Type = ObsDataType.TCoded
+                        obs.concept_id = 2152
+                        ObsDAO.insertObs(obs, False)
+
+
+                    End If
+
+                    If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "densPsicoMotor")) Then
+                        If rs.Fields.Item("densPsicoMotor").Value Then
+                            obs.value_coded = 1115
+                            obs.data_Type = ObsDataType.TCoded
+                            obs.concept_id = 1882
+                            ObsDAO.insertObs(obs, False)
+                        End If
+                    End If
+
+                    If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "investigacaoTb")) Then
+                        If rs.Fields.Item("investigacaoTb").Value = "Negativo" Then
+                            obs.value_coded = 664
+                            obs.data_Type = ObsDataType.TCoded
+                            obs.concept_id = 6277
+                            ObsDAO.insertObs(obs, False)
+                        ElseIf rs.Fields.Item("investigacaoTb").Value = "Positivo" Then
+                            obs.value_coded = 703
+                            obs.data_Type = ObsDataType.TCoded
+                            obs.concept_id = 6277
+                            ObsDAO.insertObs(obs, False)
+                        End If
+                    End If
+
+                    If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "datainiciotarv")) Then
+
+                        obs.value_datetime = rs.Fields.Item("datainiciotarv").Value
+                        obs.data_Type = ObsDataType.TDatetime
+                        obs.concept_id = 1190
+                        ObsDAO.insertObs(obs, False)
+
+                    End If
+
+                    If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "sintomasTb")) Then
+                        If rs.Fields.Item("sintomasTb").Value = "0" Then
+                            obs.value_coded = 1066
+                            obs.data_Type = ObsDataType.TCoded
+                            obs.concept_id = 6257
+                            ObsDAO.insertObs(obs, False)
+                        ElseIf rs.Fields.Item("sintomasTb").Value = "-1" Then
+                            obs.value_coded = 1065
+                            obs.data_Type = ObsDataType.TCoded
+                            obs.concept_id = 6257
+                            ObsDAO.insertObs(obs, False)
+                        End If
+                    End If
+
+                    If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "screeningIts")) Then
+                        If rs.Fields.Item("screeningIts").Value = "0" Then
+                            obs.value_coded = 1066
+                            obs.data_Type = ObsDataType.TCoded
+                            obs.concept_id = 6258
+                            ObsDAO.insertObs(obs, False)
+                        ElseIf rs.Fields.Item("screeningIts").Value = "-1" Then
+                            obs.value_coded = 1065
+                            obs.data_Type = ObsDataType.TCoded
+                            obs.concept_id = 6258
+                            ObsDAO.insertObs(obs, False)
+                        End If
+                    End If
+
+                    If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "aconselhado")) Then
+                        If rs.Fields.Item("aconselhado").Value = "0" Then
+                            obs.value_coded = 1066
+                            obs.data_Type = ObsDataType.TCoded
+                            obs.concept_id = 1714
+                            ObsDAO.insertObs(obs, False)
+                        ElseIf rs.Fields.Item("aconselhado").Value = "-1" Then
+                            obs.value_coded = 1065
+                            obs.data_Type = ObsDataType.TCoded
+                            obs.concept_id = 1714
+                            ObsDAO.insertObs(obs, False)
+                        End If
+                    End If
+
+                    If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "referidoSectorClinico")) Then
+                        Dim referidoSectorClinico As String = rs.Fields.Item("referidoSectorClinico").Value
+                        Select Case referidoSectorClinico
+                            Case "Apoio Psicosocial-AP", "Apoio Psicosocial"
+                                obs.value_coded = 2044
+                                obs.data_Type = ObsDataType.TCoded
+                                obs.concept_id = 1272
+                                ObsDAO.insertObs(obs, False)
+                            Case "TB"
+                                obs.value_coded = 5487
+                                obs.data_Type = ObsDataType.TCoded
+                                obs.concept_id = 1272
+                                ObsDAO.insertObs(obs, False)
+                            Case "Planeamento Familiar-PF"
+                                obs.value_coded = 1940
+                                obs.data_Type = ObsDataType.TCoded
+                                obs.concept_id = 1272
+                                ObsDAO.insertObs(obs, False)
+                            Case "Internamento-I"
+                                obs.value_coded = 5485
+                                obs.data_Type = ObsDataType.TCoded
+                                obs.concept_id = 1272
+                                ObsDAO.insertObs(obs, False)
+                            Case "Consulta Medica"
+                                obs.value_coded = 1798
+                                obs.data_Type = ObsDataType.TCoded
+                                obs.concept_id = 1272
+                                ObsDAO.insertObs(obs, False)
+                            Case Else
+                                obs.value_coded = 5622
+                                obs.data_Type = ObsDataType.TCoded
+                                obs.concept_id = 1272
+                                ObsDAO.insertObs(obs, False)
+                        End Select
+
+
+                    End If
+
+                    If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "dum")) Then
+                        obs.value_datetime = rs.Fields.Item("dum").Value
+                        obs.data_Type = ObsDataType.TDatetime
+                        obs.concept_id = 1465
+                        ObsDAO.insertObs(obs, False)
+
+                    End If
+
+                    If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "dpp")) Then
+                        obs.value_datetime = rs.Fields.Item("dpp").Value
+                        obs.data_Type = ObsDataType.TDatetime
+                        obs.concept_id = 1600
+                        ObsDAO.insertObs(obs, False)
+
+                    End If
+
+                    If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "PTV_TARV")) Then
+                        If rs.Fields.Item("PTV_TARV").Value = "PTV" Then
+                            obs.value_coded = 1598
+                            obs.data_Type = ObsDataType.TCoded
+                            obs.concept_id = 6286
+                            ObsDAO.insertObs(obs, False)
+                        ElseIf rs.Fields.Item("PTV_TARV").Value = "TARV" Then
+                            obs.value_coded = 6276
+                            obs.data_Type = ObsDataType.TCoded
+                            obs.concept_id = 6286
+                            ObsDAO.insertObs(obs, False)
+                        End If
+                    End If
+
+
+                    If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "lactante")) Then
+                        If rs.Fields.Item("lactante").Value Then
+                            obs.value_coded = 1065
+                            obs.data_Type = ObsDataType.TCoded
+                            obs.concept_id = 6332
+                            ObsDAO.insertObs(obs, False)
+                        End If
+                    End If
+
+                    If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "codregime")) Then
+                        obs.value_coded = FILAUtils.getRegimeTerapeuticoConceptID(rs.Fields.Item("codregime").Value)
+                        obs.data_Type = ObsDataType.TCoded
+                        obs.concept_id = 1087
+                        ObsDAO.insertObs(obs, False)
+                    End If
+
+                    If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "tipotarv")) Then
+                        obs.value_coded = FILAUtils.getTipoTarvConceptID(rs.Fields.Item("tipotarv").Value)
+                        obs.data_Type = ObsDataType.TCoded
+                        obs.concept_id = 1255
+                        ObsDAO.insertObs(obs, False)
+                    End If
+
+                    If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "motivo")) Then
+                        obs.value_coded = FILAUtils.getCodMudancaConceptID(rs.Fields.Item("motivo").Value)
+                        obs.data_Type = ObsDataType.TCoded
+                        obs.concept_id = 1792
+                        ObsDAO.insertObs(obs, False)
+                    End If
+
+                    If Not String.IsNullOrEmpty(PatientUtils.verificaNulo(rs, "motivoInicioTarv")) Then
+                        Dim motivoInicio As String = rs.Fields.Item("motivoInicioTarv").Value
+
+                        If motivoInicio = "Criterios Clinicos/Imunologicos" Then
+                            obs.value_coded = 6333
+                            obs.data_Type = ObsDataType.TCoded
+                            obs.concept_id = 6334
+                            ObsDAO.insertObs(obs, False)
+                        ElseIf motivoInicio = "Grávida" Or motivoInicio = "Gravida" Then
+                            obs.value_coded = 6331
+                            obs.data_Type = ObsDataType.TCoded
+                            obs.concept_id = 6334
+                            ObsDAO.insertObs(obs, False)
+                        ElseIf motivoInicio = "Lactante" Then
+                            obs.value_coded = 6332
+                            obs.data_Type = ObsDataType.TCoded
+                            obs.concept_id = 6334
+                            ObsDAO.insertObs(obs, False)
+                        End If
+                        
+                    End If
+
+
+
                     tratamentos = importTratamento(fonte, idSeguimento)
                     For Each o As Obs In tratamentos
                         o.date_created = Now.Date
@@ -1228,10 +1799,14 @@ Public Class SeguimentoUtils
                         o.concept_id = 1719
                         o.data_Type = ObsDataType.TCoded
                         ObsDAO.insertObs(o, False)
-                        If o.value_coded = 916 Or o.value_coded = 656 Then
-                            'o.value_boolean = True
-                            'o.data_Type = ObsDataType.TBoolean
+                        If o.value_coded = 916 Then
                             o.concept_id = 6121
+                            o.value_coded = 1065
+                            ObsDAO.insertObs(o, False)
+                        End If
+
+                        If o.value_coded = 656 Then
+                            o.concept_id = 6122
                             o.value_coded = 1065
                             ObsDAO.insertObs(o, False)
                         End If
@@ -1269,9 +1844,33 @@ Public Class SeguimentoUtils
                         o.location_id = locationid
                         o.person_id = patientID
                         o.voided = False
-                        o.data_Type = ObsDataType.TText
                         ObsDAO.insertObs(o, False)
                     Next
+
+                    diagnosticos.Clear()
+
+                    diagnosticos = ImportTuberculoseTratamento(fonte, idSeguimento)
+
+                    For Each o As Obs In diagnosticos
+                        o.date_created = Now.Date
+                        o.encounter_id = encounter_id
+                        o.location_id = locationid
+                        o.person_id = patientID
+                        o.voided = False
+                        ObsDAO.insertObs(o, False)
+                        If o.concept_id = 1113 Then
+                            Dim patientProgramTB As Integer = PatientProgamDAO.insertPatientProgramByParam(patientID, 5, o.value_datetime, locationid)
+                            Dim patientStateTB As Integer = PatientProgamDAO.insertPatientStateByParam(patientProgramTB, 16, o.value_datetime)
+                        End If
+                        If o.concept_id = 6120 Then
+                            Dim openPatientID As Integer = PatientProgamDAO.getPatientProgramID(patientID, 5)
+                            Dim stateID As Integer = PatientProgamDAO.getPatientStateByProgramID(openPatientID, 16)
+                            PatientProgamDAO.endPatientProgram(openPatientID, o.value_datetime)
+                            PatientProgamDAO.endPatientState(stateID, o.value_datetime)
+                            PatientProgamDAO.insertPatientStateByParam(openPatientID, 24, o.value_datetime)
+                        End If
+                    Next
+
                 End If
                 tratamentos.Clear()
                 infeccoes.Clear()

@@ -20,6 +20,12 @@ Public Class frmMain
                 Return 5
             Case 6
                 Return 17
+            Case 7
+                Return 398
+            Case 8
+                Return 400
+            Case 9
+                Return 399
         End Select
     End Function
 
@@ -194,56 +200,79 @@ Public Class frmMain
         Me.lblMessage.Text = "Importing Process..."
         Me.StatusStrip1.Refresh()
         Dim autil As New ProcessoUtils
-        autil.importCrianca(LocationID)
         autil.importAdulto(LocationID)
-        Me.Progress.Value = 40
+        autil.importCrianca(LocationID)
+        UpdatePatientProgram.UpdateCuidadoTratamento(ICAPConection, LocationID)
+        Me.Progress.Value = 45
 
-        'encherDataFim()
+        encherDataFim()
 
-        'encherTempo("Consultas de Seguimento")
+        encherTempo("Consultas de Seguimento")
 
-        'Me.lblMessage.Text = "Importing Seguimento..."
-        'Me.StatusStrip1.Refresh()
-        'SeguimentoUtils.importSeguimento(ICAPConection, LocationID)
-        'Me.Progress.Value = 60
+        Me.lblMessage.Text = "Importing Seguimento..."
+        Me.StatusStrip1.Refresh()
+        SeguimentoUtils.importSeguimento(ICAPConection, LocationID)
+        Me.Progress.Value = 70
 
-        'encherDataFim()
+        encherDataFim()
 
-        'encherTempo("Consultas de FRIDA")
+        encherTempo("Consultas de Fila")
 
-        'Me.lblMessage.Text = "Importing FRIDA..."
-        'Me.StatusStrip1.Refresh()
-        'FridaUtils.ImportFRIDA(ICAPConection, LocationID)
-        'Me.Progress.Value = 70
+        Me.lblMessage.Text = "Importing Fila..."
+        Me.StatusStrip1.Refresh()
+        FILAUtils.ImportFILA(ICAPConection, LocationID)
+        Me.Progress.Value = 80
 
-        'encherDataFim()
+        encherDataFim()
+
+        encherTempo("Laboratorio")
+
+        Me.lblMessage.Text = "Importing Laboratorio..."
+        Me.StatusStrip1.Refresh()
+        LabUtils.ImportLabReal(ICAPConection, LocationID)
+        Me.Progress.Value = 90
+
+        encherDataFim()
+
+        encherTempo("Aconselhamento Pre-Tarv")
+
+        Me.lblMessage.Text = "Importing Aconselhamento..."
+        Me.StatusStrip1.Refresh()
+        AconselhamentoUtils.ImportAconselhamento(ICAPConection, LocationID)
+        Me.Progress.Value = 92
+
+        encherDataFim()
 
 
-        'encherTempo("Laboratorio")
+        encherTempo("Aconselhamento: APSS/PP")
 
-        'Me.lblMessage.Text = "Importing Laboratorio..."
-        'Me.StatusStrip1.Refresh()
-        'LabUtils.ImportLabReal(ICAPConection, LocationID)
-        'Me.Progress.Value = 80
+        Me.lblMessage.Text = "Importing Aconselhamento: APSS/PP ..."
+        Me.StatusStrip1.Refresh()
+        AconselhamentoUtils.ImportAconselhamento(ICAPConection, LocationID)
+        ApssppUtil.importApssInicial(ICAPConection, LocationID)
+        ApssppUtil.importApssSeguimento(ICAPConection, LocationID)
+        Me.Progress.Value = 95
 
-        'encherDataFim()
+        encherDataFim()
 
-        'encherTempo("Aconselhamento Pre-Tarv")
 
-        'Me.lblMessage.Text = "Importing Aconselhamento..."
-        'Me.StatusStrip1.Refresh()
-        'AconselhamentoUtils.ImportAconselhamento(ICAPConection, LocationID)
-        'Me.Progress.Value = 90
+        encherTempo("Rastreio de Tuberculose")
 
-        'encherDataFim()
+        Me.lblMessage.Text = "Importing Rastreio de Tuberculose..."
+        Me.StatusStrip1.Refresh()
+        TuberculoseRastreioUtils.ImportTuberculoseReal(ICAPConection, LocationID)
 
-        'encherTempo("Rastreio de Tuberculose")
+        encherDataFim()
 
-        'Me.lblMessage.Text = "Importing Rastreio de Tuberculose..."
-        'Me.StatusStrip1.Refresh()
-        'TuberculoseRastreioUtils.ImportTuberculoseReal(ICAPConection, LocationID)
 
-        'encherDataFim()
+        encherTempo("Gaac")
+
+        Me.lblMessage.Text = "Importing Gaac..."
+        Me.StatusStrip1.Refresh()
+        GAAC.ImportGaac(ICAPConection, LocationID)
+        Me.Progress.Value = 100
+
+        encherDataFim()
 
         'encherTempo("Tratamento de Tuberculose")
 
