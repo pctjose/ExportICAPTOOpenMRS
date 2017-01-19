@@ -88,6 +88,7 @@ Public Class ObsDAO
                     '    End If
 
             End Select
+            '.Connection.Open()
             .ExecuteNonQuery()
         End With
     End Sub

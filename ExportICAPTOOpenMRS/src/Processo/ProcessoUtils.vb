@@ -1982,53 +1982,56 @@ Public Class ProcessoUtils
                     Dim nLivro As Integer = rs.Fields.Item("nlivroPreTarv").Value
 
                     If nLivro <= 2 Then
+                        If (Not IsDBNull(rs.Fields.Item("paginaPreTarv").Value)) And (Not IsDBNull(rs.Fields.Item("linhaPreTarv").Value)) And (Not IsDBNull(rs.Fields.Item("dataPreTarv").Value)) Then
 
-                        Dim nPagina As Integer = rs.Fields.Item("paginaPreTarv").Value
-                        Dim nLinha As Integer = rs.Fields.Item("linhaPreTarv").Value
-                        Dim dataLivro As Date = rs.Fields.Item("dataPreTarv").Value
 
-                        Dim livroTARVEncounterID As Integer = EncounterDAO.insertEncounterByParam(32, patientID, locationid, 128, dataLivro, 14, openMRSProviderID)
+                            Dim nPagina As Integer = rs.Fields.Item("paginaPreTarv").Value
+                            Dim nLinha As Integer = rs.Fields.Item("linhaPreTarv").Value
+                            Dim dataLivro As Date = rs.Fields.Item("dataPreTarv").Value
 
-                        'Livro
-                        obs = New Obs
-                        obs.location_id = locationid
-                        obs.person_id = patientID
-                        obs.date_created = Now
-                        obs.voided = 0
-                        obs.encounter_id = livroTARVEncounterID
-                        obs.obs_datetime = dataLivro
-                        obs.data_Type = ObsDataType.TCoded
-                        obs.concept_id = 6263
-                        obs.value_coded = IIf(nLivro = 1, 6259, 6260)
-                        dataArray.Add(obs)
+                            Dim livroTARVEncounterID As Integer = EncounterDAO.insertEncounterByParam(32, patientID, locationid, 128, dataLivro, 14, openMRSProviderID)
 
-                        obs = New Obs
-                        obs.location_id = locationid
-                        obs.person_id = patientID
-                        obs.date_created = Now
-                        obs.voided = 0
-                        obs.encounter_id = livroTARVEncounterID
-                        obs.obs_datetime = dataLivro
-                        obs.data_Type = ObsDataType.TNumeric
-                        obs.concept_id = 6265
-                        obs.value_numeric = nPagina
-                        dataArray.Add(obs)
+                            'Livro
+                            obs = New Obs
+                            obs.location_id = locationid
+                            obs.person_id = patientID
+                            obs.date_created = Now
+                            obs.voided = 0
+                            obs.encounter_id = livroTARVEncounterID
+                            obs.obs_datetime = dataLivro
+                            obs.data_Type = ObsDataType.TCoded
+                            obs.concept_id = 6263
+                            obs.value_coded = IIf(nLivro = 1, 6259, 6260)
+                            dataArray.Add(obs)
 
-                        obs = New Obs
-                        obs.location_id = locationid
-                        obs.person_id = patientID
-                        obs.date_created = Now
-                        obs.voided = 0
-                        obs.encounter_id = livroTARVEncounterID
-                        obs.obs_datetime = dataLivro
-                        obs.data_Type = ObsDataType.TNumeric
-                        obs.concept_id = 6267
-                        obs.value_numeric = nLinha
-                        dataArray.Add(obs)
+                            obs = New Obs
+                            obs.location_id = locationid
+                            obs.person_id = patientID
+                            obs.date_created = Now
+                            obs.voided = 0
+                            obs.encounter_id = livroTARVEncounterID
+                            obs.obs_datetime = dataLivro
+                            obs.data_Type = ObsDataType.TNumeric
+                            obs.concept_id = 6265
+                            obs.value_numeric = nPagina
+                            dataArray.Add(obs)
 
-                        For Each o As Obs In dataArray
-                            ObsDAO.insertObs(o, False)
-                        Next
+                            obs = New Obs
+                            obs.location_id = locationid
+                            obs.person_id = patientID
+                            obs.date_created = Now
+                            obs.voided = 0
+                            obs.encounter_id = livroTARVEncounterID
+                            obs.obs_datetime = dataLivro
+                            obs.data_Type = ObsDataType.TNumeric
+                            obs.concept_id = 6267
+                            obs.value_numeric = nLinha
+                            dataArray.Add(obs)
+
+                            For Each o As Obs In dataArray
+                                ObsDAO.insertObs(o, False)
+                            Next
+                        End If
                     End If
                 End If
 
@@ -2039,52 +2042,56 @@ Public Class ProcessoUtils
 
                     If nLivro <= 2 Then
 
-                        Dim nPagina As Integer = rs.Fields.Item("paginaTarv").Value
-                        Dim nLinha As Integer = rs.Fields.Item("linhaTarv").Value
-                        Dim dataLivro As Date = rs.Fields.Item("dataTarv2").Value
+                        If (Not IsDBNull(rs.Fields.Item("paginaTarv").Value)) And (Not IsDBNull(rs.Fields.Item("linhaTarv").Value)) And (Not IsDBNull(rs.Fields.Item("dataTarv2").Value)) Then
 
-                        Dim livroTARVEncounterID As Integer = EncounterDAO.insertEncounterByParam(33, patientID, locationid, 129, dataLivro, 14, openMRSProviderID)
 
-                        'Livro
-                        obs = New Obs
-                        obs.location_id = locationid
-                        obs.person_id = patientID
-                        obs.date_created = Now
-                        obs.voided = 0
-                        obs.encounter_id = livroTARVEncounterID
-                        obs.obs_datetime = dataLivro
-                        obs.data_Type = ObsDataType.TCoded
-                        obs.concept_id = 6264
-                        obs.value_coded = IIf(nLivro = 1, 6261, 6262)
-                        dataArray.Add(obs)
+                            Dim nPagina As Integer = rs.Fields.Item("paginaTarv").Value
+                            Dim nLinha As Integer = rs.Fields.Item("linhaTarv").Value
+                            Dim dataLivro As Date = rs.Fields.Item("dataTarv2").Value
 
-                        obs = New Obs
-                        obs.location_id = locationid
-                        obs.person_id = patientID
-                        obs.date_created = Now
-                        obs.voided = 0
-                        obs.encounter_id = livroTARVEncounterID
-                        obs.obs_datetime = dataLivro
-                        obs.data_Type = ObsDataType.TNumeric
-                        obs.concept_id = 6266
-                        obs.value_numeric = nPagina
-                        dataArray.Add(obs)
+                            Dim livroTARVEncounterID As Integer = EncounterDAO.insertEncounterByParam(33, patientID, locationid, 129, dataLivro, 14, openMRSProviderID)
 
-                        obs = New Obs
-                        obs.location_id = locationid
-                        obs.person_id = patientID
-                        obs.date_created = Now
-                        obs.voided = 0
-                        obs.encounter_id = livroTARVEncounterID
-                        obs.obs_datetime = dataLivro
-                        obs.data_Type = ObsDataType.TNumeric
-                        obs.concept_id = 6268
-                        obs.value_numeric = nLinha
-                        dataArray.Add(obs)
+                            'Livro
+                            obs = New Obs
+                            obs.location_id = locationid
+                            obs.person_id = patientID
+                            obs.date_created = Now
+                            obs.voided = 0
+                            obs.encounter_id = livroTARVEncounterID
+                            obs.obs_datetime = dataLivro
+                            obs.data_Type = ObsDataType.TCoded
+                            obs.concept_id = 6264
+                            obs.value_coded = IIf(nLivro = 1, 6261, 6262)
+                            dataArray.Add(obs)
 
-                        For Each o As Obs In dataArray
-                            ObsDAO.insertObs(o, False)
-                        Next
+                            obs = New Obs
+                            obs.location_id = locationid
+                            obs.person_id = patientID
+                            obs.date_created = Now
+                            obs.voided = 0
+                            obs.encounter_id = livroTARVEncounterID
+                            obs.obs_datetime = dataLivro
+                            obs.data_Type = ObsDataType.TNumeric
+                            obs.concept_id = 6266
+                            obs.value_numeric = nPagina
+                            dataArray.Add(obs)
+
+                            obs = New Obs
+                            obs.location_id = locationid
+                            obs.person_id = patientID
+                            obs.date_created = Now
+                            obs.voided = 0
+                            obs.encounter_id = livroTARVEncounterID
+                            obs.obs_datetime = dataLivro
+                            obs.data_Type = ObsDataType.TNumeric
+                            obs.concept_id = 6268
+                            obs.value_numeric = nLinha
+                            dataArray.Add(obs)
+
+                            For Each o As Obs In dataArray
+                                ObsDAO.insertObs(o, False)
+                            Next
+                        End If
                     End If
                 End If
 
@@ -2789,53 +2796,56 @@ Public Class ProcessoUtils
                     Dim nLivro As Integer = rs.Fields.Item("nlivroPreTarv").Value
 
                     If nLivro <= 2 Then
+                        If (Not IsDBNull(rs.Fields.Item("paginaPreTarv").Value)) And (Not IsDBNull(rs.Fields.Item("linhaPreTarv").Value)) And (Not IsDBNull(rs.Fields.Item("dataPreTarv").Value)) Then
 
-                        Dim nPagina As Integer = rs.Fields.Item("paginaPreTarv").Value
-                        Dim nLinha As Integer = rs.Fields.Item("linhaPreTarv").Value
-                        Dim dataLivro As Date = rs.Fields.Item("dataPreTarv").Value
 
-                        Dim livroTARVEncounterID As Integer = EncounterDAO.insertEncounterByParam(32, patientID, locationid, 128, dataLivro, 14, openMRSProviderID)
+                            Dim nPagina As Integer = rs.Fields.Item("paginaPreTarv").Value
+                            Dim nLinha As Integer = rs.Fields.Item("linhaPreTarv").Value
+                            Dim dataLivro As Date = rs.Fields.Item("dataPreTarv").Value
 
-                        'Livro
-                        obs = New Obs
-                        obs.location_id = locationid
-                        obs.person_id = patientID
-                        obs.date_created = Now
-                        obs.voided = 0
-                        obs.encounter_id = livroTARVEncounterID
-                        obs.obs_datetime = dataLivro
-                        obs.data_Type = ObsDataType.TCoded
-                        obs.concept_id = 6263
-                        obs.value_coded = IIf(nLivro = 1, 6259, 6260)
-                        dataArray.Add(obs)
+                            Dim livroTARVEncounterID As Integer = EncounterDAO.insertEncounterByParam(32, patientID, locationid, 128, dataLivro, 14, openMRSProviderID)
 
-                        obs = New Obs
-                        obs.location_id = locationid
-                        obs.person_id = patientID
-                        obs.date_created = Now
-                        obs.voided = 0
-                        obs.encounter_id = livroTARVEncounterID
-                        obs.obs_datetime = dataLivro
-                        obs.data_Type = ObsDataType.TNumeric
-                        obs.concept_id = 6265
-                        obs.value_numeric = nPagina
-                        dataArray.Add(obs)
+                            'Livro
+                            obs = New Obs
+                            obs.location_id = locationid
+                            obs.person_id = patientID
+                            obs.date_created = Now
+                            obs.voided = 0
+                            obs.encounter_id = livroTARVEncounterID
+                            obs.obs_datetime = dataLivro
+                            obs.data_Type = ObsDataType.TCoded
+                            obs.concept_id = 6263
+                            obs.value_coded = IIf(nLivro = 1, 6259, 6260)
+                            dataArray.Add(obs)
 
-                        obs = New Obs
-                        obs.location_id = locationid
-                        obs.person_id = patientID
-                        obs.date_created = Now
-                        obs.voided = 0
-                        obs.encounter_id = livroTARVEncounterID
-                        obs.obs_datetime = dataLivro
-                        obs.data_Type = ObsDataType.TNumeric
-                        obs.concept_id = 6267
-                        obs.value_numeric = nLinha
-                        dataArray.Add(obs)
+                            obs = New Obs
+                            obs.location_id = locationid
+                            obs.person_id = patientID
+                            obs.date_created = Now
+                            obs.voided = 0
+                            obs.encounter_id = livroTARVEncounterID
+                            obs.obs_datetime = dataLivro
+                            obs.data_Type = ObsDataType.TNumeric
+                            obs.concept_id = 6265
+                            obs.value_numeric = nPagina
+                            dataArray.Add(obs)
 
-                        For Each o As Obs In dataArray
-                            ObsDAO.insertObs(o, False)
-                        Next
+                            obs = New Obs
+                            obs.location_id = locationid
+                            obs.person_id = patientID
+                            obs.date_created = Now
+                            obs.voided = 0
+                            obs.encounter_id = livroTARVEncounterID
+                            obs.obs_datetime = dataLivro
+                            obs.data_Type = ObsDataType.TNumeric
+                            obs.concept_id = 6267
+                            obs.value_numeric = nLinha
+                            dataArray.Add(obs)
+
+                            For Each o As Obs In dataArray
+                                ObsDAO.insertObs(o, False)
+                            Next
+                        End If
                     End If
                 End If
 
@@ -2845,53 +2855,56 @@ Public Class ProcessoUtils
                     Dim nLivro As Integer = rs.Fields.Item("nlivroTarv").Value
 
                     If nLivro <= 2 Then
+                        If (Not IsDBNull(rs.Fields.Item("paginaTarv").Value)) And (Not IsDBNull(rs.Fields.Item("linhaTarv").Value)) And (Not IsDBNull(rs.Fields.Item("dataTarv2").Value)) Then
 
-                        Dim nPagina As Integer = rs.Fields.Item("paginaTarv").Value
-                        Dim nLinha As Integer = rs.Fields.Item("linhaTarv").Value
-                        Dim dataLivro As Date = rs.Fields.Item("dataTarv2").Value
 
-                        Dim livroTARVEncounterID As Integer = EncounterDAO.insertEncounterByParam(33, patientID, locationid, 129, dataLivro, 14, openMRSProviderID)
+                            Dim nPagina As Integer = rs.Fields.Item("paginaTarv").Value
+                            Dim nLinha As Integer = rs.Fields.Item("linhaTarv").Value
+                            Dim dataLivro As Date = rs.Fields.Item("dataTarv2").Value
 
-                        'Livro
-                        obs = New Obs
-                        obs.location_id = locationid
-                        obs.person_id = patientID
-                        obs.date_created = Now
-                        obs.voided = 0
-                        obs.encounter_id = livroTARVEncounterID
-                        obs.obs_datetime = dataLivro
-                        obs.data_Type = ObsDataType.TCoded
-                        obs.concept_id = 6264
-                        obs.value_coded = IIf(nLivro = 1, 6261, 6262)
-                        dataArray.Add(obs)
+                            Dim livroTARVEncounterID As Integer = EncounterDAO.insertEncounterByParam(33, patientID, locationid, 129, dataLivro, 14, openMRSProviderID)
 
-                        obs = New Obs
-                        obs.location_id = locationid
-                        obs.person_id = patientID
-                        obs.date_created = Now
-                        obs.voided = 0
-                        obs.encounter_id = livroTARVEncounterID
-                        obs.obs_datetime = dataLivro
-                        obs.data_Type = ObsDataType.TNumeric
-                        obs.concept_id = 6266
-                        obs.value_numeric = nPagina
-                        dataArray.Add(obs)
+                            'Livro
+                            obs = New Obs
+                            obs.location_id = locationid
+                            obs.person_id = patientID
+                            obs.date_created = Now
+                            obs.voided = 0
+                            obs.encounter_id = livroTARVEncounterID
+                            obs.obs_datetime = dataLivro
+                            obs.data_Type = ObsDataType.TCoded
+                            obs.concept_id = 6264
+                            obs.value_coded = IIf(nLivro = 1, 6261, 6262)
+                            dataArray.Add(obs)
 
-                        obs = New Obs
-                        obs.location_id = locationid
-                        obs.person_id = patientID
-                        obs.date_created = Now
-                        obs.voided = 0
-                        obs.encounter_id = livroTARVEncounterID
-                        obs.obs_datetime = dataLivro
-                        obs.data_Type = ObsDataType.TNumeric
-                        obs.concept_id = 6268
-                        obs.value_numeric = nLinha
-                        dataArray.Add(obs)
+                            obs = New Obs
+                            obs.location_id = locationid
+                            obs.person_id = patientID
+                            obs.date_created = Now
+                            obs.voided = 0
+                            obs.encounter_id = livroTARVEncounterID
+                            obs.obs_datetime = dataLivro
+                            obs.data_Type = ObsDataType.TNumeric
+                            obs.concept_id = 6266
+                            obs.value_numeric = nPagina
+                            dataArray.Add(obs)
 
-                        For Each o As Obs In dataArray
-                            ObsDAO.insertObs(o, False)
-                        Next
+                            obs = New Obs
+                            obs.location_id = locationid
+                            obs.person_id = patientID
+                            obs.date_created = Now
+                            obs.voided = 0
+                            obs.encounter_id = livroTARVEncounterID
+                            obs.obs_datetime = dataLivro
+                            obs.data_Type = ObsDataType.TNumeric
+                            obs.concept_id = 6268
+                            obs.value_numeric = nLinha
+                            dataArray.Add(obs)
+
+                            For Each o As Obs In dataArray
+                                ObsDAO.insertObs(o, False)
+                            Next
+                        End If
                     End If
                 End If
 
